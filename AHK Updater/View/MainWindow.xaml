@@ -1,0 +1,427 @@
+﻿<Window x:Class="AHK_Updater.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height="450" Width="800"
+        WindowStartupLocation="CenterScreen"
+        x:Name="Window">
+    <Window.Resources>
+        <Thickness x:Key="StdMargin">5</Thickness>
+        <ControlTemplate x:Key="HotstringCodeError">
+            <DockPanel>
+                <TextBlock Foreground="Red" FontSize="20">!</TextBlock>
+                <AdornedElementPlaceholder/>
+            </DockPanel>
+        </ControlTemplate>
+        <ControlTemplate x:Key="HotstringNameError">
+            <StackPanel>
+                <TextBlock Foreground="Red" FontSize="20">!</TextBlock>
+            </StackPanel>
+        </ControlTemplate>
+        <ControlTemplate x:Key="HotstringSystemError">
+            <DockPanel>
+                <TextBlock Foreground="Red" FontSize="20">!</TextBlock>
+                <AdornedElementPlaceholder/>
+            </DockPanel>
+        </ControlTemplate>
+        <Style TargetType="{x:Type ComboBox}">
+            <Setter Property="Margin" Value="{StaticResource StdMargin}" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+        <Style TargetType="{x:Type ComboBox}" x:Key="HotstringSystemStyle">
+            <Setter Property="DisplayMemberPath" Value="SystemName" />
+            <Setter Property="IsEditable" Value="True" />
+            <Setter Property="ItemsSource" Value="{Binding HotstringSystems}" />
+            <Setter Property="Margin" Value="{StaticResource StdMargin}" />
+            <Setter Property="Validation.ErrorTemplate" Value="{StaticResource HotstringSystemError}" />
+            <Setter Property="Text" Value="{Binding System, UpdateSourceTrigger=PropertyChanged}"/>
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="true">
+                    <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors)/ErrorContent}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="{StaticResource StdMargin}" />
+            <Setter Property="Padding" Value="5" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+        <Style TargetType="CheckBox">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+        <Style TargetType="GroupBox">
+            <Setter Property="Margin" Value="{StaticResource StdMargin}" />
+        </Style>
+        <Style TargetType="ItemsControl">
+            <Setter Property="Margin" Value="{StaticResource StdMargin}" />
+        </Style>
+        <Style TargetType="ListView">
+            <Setter Property="Margin" Value="{StaticResource StdMargin}" />
+        </Style>
+        <Style TargetType="ListView" x:Key="HotstringListStyle">
+            <Setter Property="DisplayMemberPath" Value="Name" />
+            <Setter Property="ItemsSource" Value="{Binding ElementName=CbHotstringSystems, Path=SelectedItem.HotstringList}" />
+            <Setter Property="Margin" Value="{StaticResource StdMargin}" />
+            <Setter Property="SelectionMode" Value="Single" />
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Margin" Value="{StaticResource StdMargin}" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+        <Style TargetType="{x:Type TextBox}" x:Key="HotstringCodeStyle">
+            <Setter Property="AcceptsReturn" Value="True" />
+            <Setter Property="AcceptsTab" Value="True" />
+            <Setter Property="Margin" Value="{StaticResource StdMargin}" />
+            <Setter Property="Validation.ErrorTemplate" Value="{StaticResource HotstringCodeError}" />
+            <Setter Property="VerticalContentAlignment" Value="Top" />
+            <Setter Property="Text" Value="{Binding Value, UpdateSourceTrigger=PropertyChanged}"/>
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="True">
+                    <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors)/ErrorContent}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="{x:Type TextBox}" x:Key="HotstringMenuTitleStyle">
+            <Setter Property="Margin" Value="{StaticResource StdMargin}" />
+            <Setter Property="Validation.ErrorTemplate" Value="{StaticResource HotstringCodeError}" />
+            <Setter Property="VerticalContentAlignment" Value="Top" />
+            <Setter Property="Text" Value="{Binding MenuTitle, UpdateSourceTrigger=PropertyChanged}"/>
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="True">
+                    <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors)/ErrorContent}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="{x:Type TextBox}" x:Key="HotstringNameStyle">
+            <Setter Property="Margin" Value="{StaticResource StdMargin}" />
+            <Setter Property="Text" Value="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+            <Setter Property="Validation.ErrorTemplate" Value="{StaticResource HotstringNameError}" />
+            <Setter Property="VerticalContentAlignment" Value="Top" />
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="True">
+                    <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors)/ErrorContent}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Menu>
+            <MenuItem x:Name="MenuItemNewCommand" Header="New command">
+                <MenuItem x:Name="MenuItemFunction" Header="Function"/>
+                <MenuItem x:Name="MenuItemHotstring" Header="Hotstring"/>
+                <MenuItem x:Name="MenuItemVariable" Header="Variable"/>
+            </MenuItem>
+            <MenuItem x:Name="MenuItemClose"/>
+        </Menu>
+        <TabControl Grid.Row="1">
+            <TabItem x:Name="TiHotstrings" Header="Hotstring" DataContext="{Binding HotstringViewModel}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <ComboBox x:Name="CbHotstringSystems" Style="{StaticResource HotstringSystemStyle}"/>
+                    <ListView x:Name="LvHotstrings" Grid.Row="1" Grid.RowSpan="2" Style="{StaticResource HotstringListStyle}" SelectionChanged="LvHotstrings_SelectionChanged"/>
+                    <Grid x:Name="gridHotstring" Grid.Column="1" Grid.RowSpan="2">
+                        <Grid.Style>
+                            <Style TargetType="{x:Type Grid}">
+                                <Setter Property="IsEnabled" Value="True" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ElementName=LvHotstrings, Path=SelectedItems.Count}" Value="0">
+                                        <Setter Property="IsEnabled" Value="False" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="200"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Label x:Name="LblHotstringNameTitle"/>
+                        <TextBox x:Name="TbHotstringName" Grid.Column="1" Style="{StaticResource HotstringNameStyle}"/>
+                        <Label x:Name="LblHotstringSystemTitle" Grid.Row="1"/>
+                        <ComboBox x:Name="CbHotstringSystem" Grid.Column="1" Grid.Row="1" Style="{StaticResource HotstringSystemStyle}">
+                        </ComboBox>
+                        <Label x:Name="LblHotstringMenuItemTitle" Grid.Row="2"/>
+                        <TextBox x:Name="TbHotstringMenuTitle" Grid.Column="1" Grid.Row="2" Style="{StaticResource HotstringMenuTitleStyle}"/>
+                        <TextBox x:Name="TbHotstringCode" Grid.ColumnSpan="2" Grid.Row="3" Style="{StaticResource HotstringCodeStyle}"/>
+                    </Grid>
+                    <Grid x:Name="gridHotstringOps" Grid.Column="1" Grid.Row="3">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock x:Name="TblHotstringError" Text="{Binding HotstringError, UpdateSourceTrigger=PropertyChanged}" Foreground="Red" Margin="5" TextWrapping="Wrap"/>
+                        <Button x:Name="BtnHotstringSave" Grid.Column="1" Command="{Binding CmdHotstringSave}"/>
+                        <Button x:Name="BtnHotstringRemove" Grid.Column="2"/>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="TiHVariables" Header="Variable">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="1.5*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="1*"/>
+                    </Grid.RowDefinitions>
+                    <ListView x:Name="LvVariables" Grid.RowSpan="6" ItemsSource="{Binding VariableList}"/>
+                    <Label x:Name="LblVariableNameTitle" Grid.Column="1"/>
+                    <TextBox x:Name="TbVariableName" Grid.Column="1" Grid.Row="1" Text="{Binding ElementName=LvHotstrings, Path=SelectedItem.Name}"/>
+                    <Label x:Name="LblVariableValueTitle" Grid.Column="1" Grid.Row="2"/>
+                    <TextBox x:Name="TbVariableValue" Grid.Column="1" Grid.Row="3" Text="{Binding ElementName=LvHotstrings, Path=SelectedItem.Value}"/>
+                    <StackPanel Grid.Column="1" Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button x:Name="BtnVariableSave" />
+                        <Button x:Name="BtnVariableRemove" />
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="TiFunctions" Header="Function">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="1.5*"/>
+                    </Grid.ColumnDefinitions>
+                    <ListView x:Name="LvFunctions" ItemsSource="{Binding FunctionList}"/>
+                    <Grid Grid.Column="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition />
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Label x:Name="LblFunctionNameTitle"/>
+                        <TextBox x:Name="TbFunctionName" Grid.Column="1" Text="{Binding ElementName=LvFunctions, Path=SelectedItem.Name}"/>
+                        <TextBox x:Name="TbFunctionCode" Grid.ColumnSpan="2" Grid.Row="1" Text="{Binding ElementName=LvFunctions, Path=SelectedItem.Value}"/>
+                        <StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button x:Name="BtnFunctionSave" />
+                            <Button x:Name="BtnFunctionRemove" />
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="TiChangelog" Header="Changelog">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="1.5*"/>
+                    </Grid.ColumnDefinitions>
+                    <ListView x:Name="LvChangesList" ItemsSource="{Binding ChangeList}"/>
+                    <Grid Grid.Column="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition />
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Label x:Name="LblChangeNameTitle"/>
+                        <TextBox x:Name="TbChangeName" Grid.Column="1" Text="{Binding ElementName=LvChangesList, Path=SelectedItem.Date}"/>
+                        <TextBox x:Name="TbChangeText" Grid.ColumnSpan="2" Grid.Row="1" Text="{Binding ElementName=LvChangesList, Path=SelectedItem.Value}"/>
+                        <Button x:Name="BtnChangeSave" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Right" />
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="TiToExtract" Header="To extract">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <ListView x:Name="LvExtractList"/>
+                    <Grid Grid.Column="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                            <Button x:Name="BtnExtractToScript" />
+                            <Button x:Name="BtnExtractToXml" />
+                        </StackPanel>
+                        <Button x:Name="BtnRemoveFromExtractList" Grid.Row="1" HorizontalAlignment="Left" />
+                        <Button x:Name="BtnCancelExtraction" Grid.Row="2" HorizontalAlignment="Left" />
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="TiSettings" Header="Settings">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <ListView x:Name="LvSettingsType" ItemsSource="{Binding SettingList}"/>
+                    <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                        <ScrollViewer.Resources>
+                            <Style x:Key="GridSettingsStyle" TargetType="ItemsControl">
+                                <Setter Property="ItemsPanel">
+                                    <Setter.Value>
+                                        <ItemsPanelTemplate>
+                                            <Grid Height="33">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition />
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+                                            </Grid>
+                                        </ItemsPanelTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ScrollViewer.Resources>
+                        <Grid>
+                            <GroupBox x:Name="GrpBoxFunctionSettings">
+                                <GroupBox.Style>
+                                    <Style TargetType="GroupBox">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ElementName=LviFunctionSettings, Path=IsSelected}">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </GroupBox.Style>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <GroupBox x:Name="GrpBoxFunctionSettingsScriptOperations">
+                                        <ItemsControl x:Name="IcAhkMenuTrigger" Style="{StaticResource GridSettingsStyle}">
+                                            <Label x:Name="LblAhkMenuTriggerTitle"/>
+                                            <TextBox x:Name="TbAhkMenuTrigger" Grid.Column="1"/>
+                                            <Button x:Name="BtnAhkMenuTrigger" Grid.Column="2"/>
+                                        </ItemsControl>
+                                    </GroupBox>
+                                </Grid>
+                            </GroupBox>
+                            <GroupBox x:Name="GrpBoxScriptSettings">
+                                <GroupBox.Style>
+                                    <Style TargetType="GroupBox">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ElementName=LviScriptSettings, Path=IsSelected}">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </GroupBox.Style>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <GroupBox x:Name="GrpBoxSectionTexts">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                            </Grid.RowDefinitions>
+                                            <ItemsControl x:Name="IcSectionTextMenuTitle" Style="{StaticResource GridSettingsStyle}">
+                                                <Label x:Name="LblSectionTextMenuTitleTitle"/>
+                                                <TextBox x:Name="TbSectionTextMenuTitle" Grid.Column="1"/>
+                                                <Button x:Name="BtnSectionTextMenunTitle" Grid.Column="2"/>
+                                            </ItemsControl>
+                                            <ItemsControl x:Name="IcSectionTextMenuTriggersTitle" Grid.Row="1" Style="{StaticResource GridSettingsStyle}">
+                                                <Label x:Name="LblSectionTextMenuActionTriggersTitleTitle"/>
+                                                <TextBox x:Name="TbSectionTextMenuTriggersTitle" Grid.Column="1"/>
+                                                <Button x:Name="BtnSectionTextMenuTriggersTitle" Grid.Column="2"/>
+                                            </ItemsControl>
+                                            <ItemsControl x:Name="IcSectionTextVariablesTitle" Grid.Row="2" Style="{StaticResource GridSettingsStyle}">
+                                                <Label x:Name="LblSectionTextVariablesTitleTitle"/>
+                                                <TextBox x:Name="TbSectionTextVariablesTitle" Grid.Column="1"/>
+                                                <Button x:Name="BtnSectionTextVariablesTitle" Grid.Column="2"/>
+                                            </ItemsControl>
+                                            <ItemsControl x:Name="IcSectionTextFunctionsTitle" Grid.Row="3" Style="{StaticResource GridSettingsStyle}">
+                                                <Label x:Name="LblSectionTextFunctionsTitleTitle"/>
+                                                <TextBox x:Name="TbSectionTextFunctionsTitle" Grid.Column="1"/>
+                                                <Button x:Name="BtnSectionTextFunctionsTitle" Grid.Column="2"/>
+                                            </ItemsControl>
+                                            <ItemsControl x:Name="IcSectionTextHotstringsTitle" Grid.Row="4" Style="{StaticResource GridSettingsStyle}">
+                                                <Label x:Name="LblSectionTextHotstringsTitleTitle"/>
+                                                <TextBox x:Name="TbSectionTextHotstringsTitle" Grid.Column="1"/>
+                                                <Button x:Name="BtnSectionTextHotstringsTitle" Grid.Column="2"/>
+                                            </ItemsControl>
+                                            <ItemsControl x:Name="IcSectionTextTitleDevider" Grid.Row="5" Style="{StaticResource GridSettingsStyle}">
+                                                <Label x:Name="LblSectionTextTitleDeviderTitleTitle"/>
+                                                <TextBox x:Name="TbSectionTextTitleDevider" Grid.Column="1"/>
+                                                <Button x:Name="BtnSectionTextTitleDevider" Grid.Column="2"/>
+                                            </ItemsControl>
+                                        </Grid>
+                                    </GroupBox>
+                                </Grid>
+                            </GroupBox>
+                            <GroupBox x:Name="GrpBoxApplicationSettings">
+                                <GroupBox.Style>
+                                    <Style TargetType="GroupBox">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ElementName=LviApplicationSettings, Path=IsSelected}">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </GroupBox.Style>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <ItemsControl x:Name="IcEditorForOpeningFiles" Style="{StaticResource GridSettingsStyle}">
+                                        <Label x:Name="LblEditorForOpeningFiles"/>
+                                        <ComboBox x:Name="CbEditorForOpeningFiles" Grid.Column="1" DisplayMemberPath="Name" ItemsSource="{Binding EditorsList}"/>
+                                        <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Center">
+                                            <Button x:Name="BtnEditorForOpeningFilesScript" Grid.Column="2"/>
+                                            <Button x:Name="BtnEditorForOpeningFilesXML" Grid.Column="2"/>
+                                        </StackPanel>
+                                    </ItemsControl>
+                                </Grid>
+                            </GroupBox>
+                        </Grid>
+                    </ScrollViewer>
+                </Grid>
+            </TabItem>
+        </TabControl>
+        <StackPanel Grid.Row="2" HorizontalAlignment="Right" Orientation="Horizontal">
+            <CheckBox x:Name="CbSaveWithMenu"/>
+            <Button x:Name="BtnSave" Command="{Binding CmdSaveFile}"/>
+        </StackPanel>
+    </Grid>
+</Window>
