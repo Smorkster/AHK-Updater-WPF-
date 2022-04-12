@@ -1,0 +1,414 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="BtnAddForExtractionContent" xml:space="preserve">
+    <value>Add to extraction</value>
+  </data>
+  <data name="BtnCancelExtractionContent" xml:space="preserve">
+    <value>Cancel extraction</value>
+  </data>
+  <data name="BtnCancelPathContent" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="BtnChangeSaveContent" xml:space="preserve">
+    <value>Save changeinfo</value>
+  </data>
+  <data name="BtnDeleteContent" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="BtnEditorForOpeningFilesScriptContent" xml:space="preserve">
+    <value>Open script</value>
+  </data>
+  <data name="BtnEditorForOpeningFilesXMLContent" xml:space="preserve">
+    <value>Open XML</value>
+  </data>
+  <data name="BtnExtractToScriptContent" xml:space="preserve">
+    <value>Extract to script</value>
+  </data>
+  <data name="BtnExtractToXmlContent" xml:space="preserve">
+    <value>Extract to XML</value>
+  </data>
+  <data name="BtnFunctionAddParameterContent" xml:space="preserve">
+    <value>Add parameter</value>
+  </data>
+  <data name="BtnFunctionRemoveParameterToolTip" xml:space="preserve">
+    <value>Remove parameter</value>
+  </data>
+  <data name="BtnFunctionSaveContent" xml:space="preserve">
+    <value>Save function</value>
+  </data>
+  <data name="BtnGetSettingFolder" xml:space="preserve">
+    <value>Select a folder</value>
+  </data>
+  <data name="BtnHotstringSaveContent" xml:space="preserve">
+    <value>Save hotstring</value>
+  </data>
+  <data name="BtnRemoveFromExtractListContent" xml:space="preserve">
+    <value>Remove from extraction list</value>
+  </data>
+  <data name="BtnSaveContent" xml:space="preserve">
+    <value>Save to file</value>
+  </data>
+  <data name="BtnSaveSettingsContent" xml:space="preserve">
+    <value>Save settings</value>
+  </data>
+  <data name="BtnSelectPathContent" xml:space="preserve">
+    <value>Select</value>
+  </data>
+  <data name="BtnVariableSaveContent" xml:space="preserve">
+    <value>Save variable</value>
+  </data>
+  <data name="CbAdvancedHotstringContent" xml:space="preserve">
+    <value>Advanced hotstring</value>
+  </data>
+  <data name="CbAdvancedHotstringToolTip" xml:space="preserve">
+    <value>An advanced hotstring, errorchecking will not be done</value>
+  </data>
+  <data name="CbSaveWithMenuContent" xml:space="preserve">
+    <value>Include GUI for menu</value>
+  </data>
+  <data name="CodeNewFunctionInfo" xml:space="preserve">
+    <value>Code for function here</value>
+  </data>
+  <data name="CodeNewParameter" xml:space="preserve">
+    <value>NewParameter</value>
+  </data>
+  <data name="ExpParametersHeader" xml:space="preserve">
+    <value>Parameters</value>
+  </data>
+  <data name="GrpBoxApplicationSettingsHeader" xml:space="preserve">
+    <value>Application-settings</value>
+  </data>
+  <data name="GrpBoxFunctionSettingsHeader" xml:space="preserve">
+    <value>Functional settings</value>
+  </data>
+  <data name="GrpBoxFunctionSettingsScriptOperationsHeader" xml:space="preserve">
+    <value>Scriptoperations</value>
+  </data>
+  <data name="GrpBoxScriptSettingsHeader" xml:space="preserve">
+    <value>Script settings</value>
+  </data>
+  <data name="GrpBoxSectionTextsHeader" xml:space="preserve">
+    <value>Section texts</value>
+  </data>
+  <data name="HotstringVerifySaveUnsavedEdit" xml:space="preserve">
+    <value>A hotstring is currently being edited, do you which to save this?</value>
+  </data>
+  <data name="HotstringVerifySaveUnsavedEditNew" xml:space="preserve">
+    <value>A new hotstring is currently being created, do you which to save this?</value>
+  </data>
+  <data name="LblAhkMenuTriggerTitleContent" xml:space="preserve">
+    <value>Menu trigger</value>
+  </data>
+  <data name="LblChangeNameTitleContent" xml:space="preserve">
+    <value>Change date</value>
+  </data>
+  <data name="LblEditorForOpeningFilesContent" xml:space="preserve">
+    <value>Select editor to open files with</value>
+  </data>
+  <data name="LblFunctionNameTitleContent" xml:space="preserve">
+    <value>Function name</value>
+  </data>
+  <data name="LblHotstringMenuItemTitleContent" xml:space="preserve">
+    <value>Menu title</value>
+  </data>
+  <data name="LblHotstringNameTitleContent" xml:space="preserve">
+    <value>Hotstring name</value>
+  </data>
+  <data name="LblHotstringSystemTitleContent" xml:space="preserve">
+    <value>System</value>
+  </data>
+  <data name="LblSectionTextFunctionsTitleTitleContent" xml:space="preserve">
+    <value>Title for functions-section</value>
+  </data>
+  <data name="LblSectionTextHotstringsTitleTitleContent" xml:space="preserve">
+    <value>Title for hotstrings-section</value>
+  </data>
+  <data name="LblSectionTextMenuActionTriggersTitleTitleContent" xml:space="preserve">
+    <value>Title for menutriggers-section</value>
+  </data>
+  <data name="LblSectionTextMenuTitleTitleContent" xml:space="preserve">
+    <value>Title for menu-section</value>
+  </data>
+  <data name="LblSectionTextTitleDeviderTitleTitleContent" xml:space="preserve">
+    <value>Titledivider-character</value>
+  </data>
+  <data name="LblSectionTextVariablesTitleTitleContent" xml:space="preserve">
+    <value>Title for variables-section</value>
+  </data>
+  <data name="LblVariableNameTitleContent" xml:space="preserve">
+    <value>Variable name</value>
+  </data>
+  <data name="LblVariableValueTitleContent" xml:space="preserve">
+    <value>Value</value>
+  </data>
+  <data name="LvExtractListTitleContent" xml:space="preserve">
+    <value>Items to extract</value>
+  </data>
+  <data name="MainMenuNewCommand" xml:space="preserve">
+    <value>New command</value>
+  </data>
+  <data name="MainMenuNewFunction" xml:space="preserve">
+    <value>Function</value>
+  </data>
+  <data name="MainMenuNewHotstring" xml:space="preserve">
+    <value>Hotstring</value>
+  </data>
+  <data name="MainMenuNewVariable" xml:space="preserve">
+    <value>Variable</value>
+  </data>
+  <data name="MsgCultureChanged" xml:space="preserve">
+    <value>The new culture will be used at next startup</value>
+  </data>
+  <data name="MsgExtractedTo" xml:space="preserve">
+    <value>Selected objects extracted to:</value>
+  </data>
+  <data name="MsgQSaveBeforeClosing" xml:space="preserve">
+    <value>There are unsaved changes. Do you want to save these before closing the application?</value>
+  </data>
+  <data name="MsgQSaveBeforeClosingBtn1" xml:space="preserve">
+    <value>Save (script without GUI)</value>
+  </data>
+  <data name="MsgQSaveBeforeClosingBtn2" xml:space="preserve">
+    <value>Save (script with GUI)</value>
+  </data>
+  <data name="MsgQSaveBeforeClosingBtn3" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="MsgQSaveBeforeClosingTitle" xml:space="preserve">
+    <value>Unsaved changes</value>
+  </data>
+  <data name="MsgSaveBeforeClosing" xml:space="preserve">
+    <value>Data have been changed, but is not saved. Do you want to save before closing the application?</value>
+  </data>
+  <data name="ScriptFileCreatedAt" xml:space="preserve">
+    <value>Created at</value>
+  </data>
+  <data name="SettingsResetValueButtonContent" xml:space="preserve">
+    <value>Reset to default</value>
+  </data>
+  <data name="SuggestedPathAttributesHeader" xml:space="preserve">
+    <value>Attributes</value>
+  </data>
+  <data name="SuggestedPathHeader" xml:space="preserve">
+    <value>Path</value>
+  </data>
+  <data name="TiChangelogHeader" xml:space="preserve">
+    <value>Changelog</value>
+  </data>
+  <data name="TiFunctionsHeader" xml:space="preserve">
+    <value>Functions</value>
+  </data>
+  <data name="TiHotstringsHeader" xml:space="preserve">
+    <value>Hotstrings</value>
+  </data>
+  <data name="TiHVariablesHeader" xml:space="preserve">
+    <value>Variables</value>
+  </data>
+  <data name="TiSettingsHeader" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="TiToExtractHeader" xml:space="preserve">
+    <value>To extract</value>
+  </data>
+  <data name="ValidationErrorFunctionCodeEmpty" xml:space="preserve">
+    <value>Code must contain something</value>
+  </data>
+  <data name="ValidationErrorFunctionNameAlreadyInUse" xml:space="preserve">
+    <value>Name is already in use</value>
+  </data>
+  <data name="ValidationErrorFunctionNameContainsWhiteSpace" xml:space="preserve">
+    <value>Name can not contain any whitespace character</value>
+  </data>
+  <data name="ValidationErrorFunctionNameEmpty" xml:space="preserve">
+    <value>Name can not be empty</value>
+  </data>
+  <data name="ValidationErrorHotstringCodeEmpty" xml:space="preserve">
+    <value>Code must contain something</value>
+  </data>
+  <data name="ValidationErrorHotstringCodeNoParenthesis" xml:space="preserve">
+    <value>Code will not post text</value>
+  </data>
+  <data name="ValidationErrorHotstringNameAlreadyInUse" xml:space="preserve">
+    <value>Name is already in use</value>
+  </data>
+  <data name="ValidationErrorHotstringNameContainsWhiteSpace" xml:space="preserve">
+    <value>Name can not contain any whitespace character</value>
+  </data>
+  <data name="ValidationErrorHotstringNameEmpty" xml:space="preserve">
+    <value>Name can not be empty</value>
+  </data>
+  <data name="ValidationErrorHotstringSystemContainsWhiteSpace" xml:space="preserve">
+    <value>Systemname can not contain any whitespace character</value>
+  </data>
+  <data name="ValidationErrorHotstringSystemEmpty" xml:space="preserve">
+    <value>System can not be empty</value>
+  </data>
+  <data name="ValidationErrorNameAlreadyInUseAsFunction" xml:space="preserve">
+    <value>Name is already in use as a function</value>
+  </data>
+  <data name="ValidationErrorNameAlreadyInUseAsHotstring" xml:space="preserve">
+    <value>Name is already in use as a hotstring</value>
+  </data>
+  <data name="ValidationErrorNameAlreadyInUseAsSetting" xml:space="preserve">
+    <value>Name is already in use as a setting</value>
+  </data>
+  <data name="ValidationErrorNameAlreadyInUseAsVariable" xml:space="preserve">
+    <value>Name is already in use as a variable</value>
+  </data>
+  <data name="ValidationErrorParameterNameAlreadyInUse" xml:space="preserve">
+    <value>Name of parameter already exists in this function</value>
+  </data>
+  <data name="ValidationErrorSettingDirectoryDoesNotExist" xml:space="preserve">
+    <value>Directory does not exist</value>
+  </data>
+  <data name="ValidationErrorSettingNotOneOfAvailableValues" xml:space="preserve">
+    <value>is not one of available valid values</value>
+  </data>
+  <data name="ValidationErrorSettingValueEmpty" xml:space="preserve">
+    <value>must have a value set</value>
+  </data>
+  <data name="ValidationErrorVariableNameAlreadyInUse" xml:space="preserve">
+    <value>Name is already in use</value>
+  </data>
+  <data name="ValidationErrorVariableNameContainsWhiteSpace" xml:space="preserve">
+    <value>Name can not contain any whitespace character</value>
+  </data>
+  <data name="ValidationErrorVariableNameEmpty" xml:space="preserve">
+    <value>Name can not be empty</value>
+  </data>
+  <data name="ValidationInvalidCulture" xml:space="preserve">
+    <value>The culture specified in the save-file is not valid. Default value of 'en' (english) will be used.</value>
+  </data>
+  <data name="ValidationInvalidCultureInfoUsed" xml:space="preserve">
+    <value>The string located in the save-file is: </value>
+  </data>
+  <data name="ValidationNoCultureSpecified" xml:space="preserve">
+    <value>No culture have been specified in the save-file. Default value of 'en' (english) will be used.</value>
+  </data>
+  <data name="ValidationWarningFunctionCodeEmpty" xml:space="preserve">
+    <value>Code should contain something</value>
+  </data>
+  <data name="ValidationWarningHotstringMenuTitleEmpty" xml:space="preserve">
+    <value>If menutitle is left empty, a default string will be used</value>
+  </data>
+  <data name="ValidationWarningVariableValueEmpty" xml:space="preserve">
+    <value>Value should be set to something</value>
+  </data>
+</root>

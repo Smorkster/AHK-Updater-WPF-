@@ -1,7 +1,7 @@
-﻿<Application x:Class="AHK_Updater.App"
+﻿<Application x:Uid="Application_1" x:Class="AHKUpdater.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:AHK_Updater">
+             xmlns:local="clr-namespace:AHKUpdater">
     <Application.Resources>
 
     </Application.Resources>

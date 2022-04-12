@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace AHK_Updater.Models
+namespace AHKUpdater.Model
 {
 	public class Editor
 	{
@@ -10,24 +10,8 @@ namespace AHK_Updater.Models
 			Path = new FileInfo( Editor );
 		}
 
-		public string Name
-		{
-			get
-			{
-				return Path.Name;
-			}
-		}
+		public string Name => Path.Name;
 
-		public FileInfo Path
-		{
-			get
-			{
-				return Path;
-			}
-			set
-			{
-				Path = value;
-			}
-		}
+		public FileInfo Path { get; set; }
 	}
 }

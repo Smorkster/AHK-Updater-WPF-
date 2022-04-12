@@ -1,52 +1,51 @@
-﻿using AHK_Updater.Models;
-using AHK_Updater.ViewModel;
+﻿using AHKUpdater.ViewModel;
 using System;
 using System.IO;
 using System.Windows;
-using System.Windows.Controls;
+using System.Xml;
 using System.Xml.Serialization;
 
-namespace AHK_Updater
+namespace AHKUpdater
 {
-	/// <summary>
-	/// Interaction logic for App.xaml
-	/// </summary>
-	public partial class App : Application
-	{
-		public MainWindow MainGUI;
+    public partial class App : Application
+    {
+        private readonly FileInfo _xmlFile = new FileInfo( $"{ Environment.GetEnvironmentVariable( "USERPROFILE" ) }\\AHKUpdaterData.xml" );
 
-		protected override void OnStartup ( StartupEventArgs e )
-		{
-			base.OnStartup( e );
-			var dvm = new DataViewModel();
-			MainGUI = new MainWindow
-			{
-				DataContext = dvm
-			};
-			MainGUI.Show();
+        protected override void OnStartup ( StartupEventArgs e )
+        {
+            base.OnStartup( e );
+            DataViewModel dvm = Read();
+            dvm.XmlFile = _xmlFile.FullName;
+            MainWindow MainGUI = new MainWindow( dvm.SettingVM.GetSetting( "Application", "GlobalCulture" ).Value )
+            {
+                DataContext = dvm
+            };
 
-			SetupEditors();
-			var a = Read();
+            MainGUI.Show();
+        }
 
-			dvm.HotstringViewModel.Add( new Hotstring( "Test", "Test", "Sys", "ijdkqwopijfowklfålpoewijfkmewllåpfokijewkfwfeklew" ) );
-			dvm.HotstringViewModel.Add( new Hotstring( "Test2", "Test", "Sys", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" ) );
-			dvm.HotstringViewModel.Add( new Hotstring( "Test3", "Test", "TestSys2", "Testing menutext" ) );
-			dvm.HotstringViewModel.Add( new Hotstring( "Test4", "Test", "TestSys2", "Test menu" ) );
-		}
+        private DataViewModel Read ()
+        {
+            using XmlReader stream = XmlReader.Create( new FileStream( _xmlFile.FullName, FileMode.Open ) );
+            DataViewModel dvm;
 
-		private object Read ()
-		{
-			using ( FileStream stream = new FileStream( @"C:\Users\6g1w\Documents\t.xml", FileMode.Open ) )
-			{
-				return ( new XmlSerializer( typeof( DataViewModel ) ) ).Deserialize( stream );
-			}
-		}
+            try
+            {
+                dvm = (DataViewModel) new XmlSerializer( typeof( DataViewModel ) ).Deserialize( stream );
+            }
+            catch ( InvalidOperationException )
+            {
+                dvm = new DataViewModel();
+                dvm.SettingVM.ResetAllDefault();
+            }
 
-		private void SetupEditors ()
-		{
-			EditorViewModel evm = new EditorViewModel();
-			evm.GenerateEditorList();
-			( ( ComboBox ) MainGUI.FindName( "CbEditorForOpeningFiles" ) ).DataContext = evm;
-		}
-	}
+            if ( string.IsNullOrEmpty( dvm.SettingVM.GetSetting( "Files", "ScriptFileLocation" ).Value ) )
+            {
+                dvm.SettingVM.GetSetting( "Files", "ScriptFileLocation" ).Value = _xmlFile.Directory.FullName;
+            }
+            dvm.InitiateFull();
+
+            return dvm;
+        }
+    }
 }

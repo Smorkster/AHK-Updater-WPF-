@@ -1,102 +1,201 @@
-﻿using System.Collections.ObjectModel;
+﻿using AHKUpdater.Library;
+using AHKUpdater.Library.Enums;
+using AHKUpdater.Model;
+using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Text.RegularExpressions;
+using System.Windows.Input;
+using System.Xml.Serialization;
 
-namespace AHK_Updater.Models
+namespace AHKUpdater.ViewModel
 {
-	/// <summary>
-	/// Model containing all data for variables
-	/// </summary>
-	public class VariableViewModel : IData
-	{
-		public VariableViewModel ()
-		{
-			VariablesList = new ObservableCollection<Variable>();
-		}
+    /// <summary> Model containing all data for variables </summary>
+    public class VariableViewModel : INotifyPropertyChanged, IViewModel
+    {
+        private ICommand _cmdRemove;
+        private AhkVariable _currentlyActive;
+        private ObservableCollection<Message> _variableError = new ObservableCollection<Message>();
+        private ObservableCollection<AhkVariable> _variableList;
 
-		public VariableViewModel ( ObservableCollection<Variable> variables )
-		{
-			VariablesList = variables;
-		}
+        public VariableViewModel ()
+        {
+            VariableList = new ObservableCollection<AhkVariable>();
+            CurrentlyActive = null;
+        }
 
-		/// <summary>
-		/// Add a new variable
-		/// </summary>
-		/// <param name="item">The variable to be added</param>
-		public void Add ( object item )
-		{
-			VariablesList.Add( ( Variable ) item );
-		}
+        public VariableViewModel ( ObservableCollection<AhkVariable> variables )
+        {
+            VariableList = variables;
+        }
 
-		/// <summary>
-		/// Removes a saved variable
-		/// </summary>
-		/// <param name="variableName">Name of variable to be removed</param>
-		public void Delete ( string variableName )
-		{
-			Variable variable = VariablesList.Single( x => x.Name.Equals( variableName ) );
-			VariablesList.Remove( variable );
-		}
+        public event PropertyChangedEventHandler PropertyChanged;
 
-		/// <summary>
-		/// Checks if a variable with specified name exist
-		/// </summary>
-		/// <param name="name">A name to check</param>
-		/// <returns>If a variable exists</returns>
-		public bool Exists ( string name )
-		{
-			return VariablesList.Any( x => x.Name.Equals( name ) );
-		}
+        public ICommand CmdRemove => _cmdRemove ??= new RelayCommand( x => { Remove(); }, predicate => AnySelected() );
 
-		/// <summary>
-		/// Get a saved variable
-		/// </summary>
-		/// <param name="variableName">Name of variable to return</param>
-		/// <returns>Return a variable object</returns>
-		public Variable Get ( string variableName )
-		{
-			return VariablesList.First( x => x.Name.Equals( variableName ) );
-		}
+        [XmlIgnore]
+        public AhkVariable CurrentlyActive
+        {
+            get => _currentlyActive;
+            set
+            {
+                _currentlyActive = value;
+                OnPropertyChanged( "CurrentlyActive" );
+            }
+        }
 
-		/// <summary>
-		/// Get the variable list
-		/// </summary>
-		/// <returns>The variable list</returns>
-		public ObservableCollection<Variable> VariablesList { get; }
+        [XmlIgnore]
+        public ObservableCollection<Message> MessageQueue
+        {
+            get => _variableError;
+            set
+            {
+                _variableError = value;
+                OnPropertyChanged( "MessageQueue" );
+            }
+        }
 
-		public string this[string propertyName] => throw new System.NotImplementedException();
+        [XmlIgnore]
+        public AhkVariable SelectedVariable
+        {
+            get
+            {
+                try
+                {
+                    return VariableList.First( x => x.Id.Equals( CurrentlyActive.Id ) );
+                }
+                catch ( InvalidOperationException )
+                {
+                    return null;
+                }
+                catch ( NullReferenceException )
+                {
+                    return null;
+                }
+            }
+        }
 
-		/// <summary>
-		/// Get all variables names as a string
-		/// </summary>
-		/// <returns>String with the names of all variables</returns>
-		internal string GetNamesString ()
-		{
-			string s = "";
-			foreach ( Variable v in VariablesList )
-			{
-				s = s + " " + v.Name;
-			}
-			return s.Trim();
-		}
+        public bool Unchanged
+        {
+            get
+            {
+                try
+                {
+                    if ( VariableList.Count > 0 )
+                    {
+                        AhkVariable temp = VariableList.First( x => x.Id == CurrentlyActive.Id );
+                        if ( temp.Equal( CurrentlyActive ) )
+                        {
+                            return true;
+                        }
+                    }
+                }
+                catch ( InvalidOperationException ) { }
 
-		/// <summary>
-		/// Update an existing hotstring 
-		/// </summary>
-		/// <param name="OldItem">Name of hotstring to be updated</param>
-		/// <param name="UpdatedItem">Updated hotstring</param>
-		public void Update ( string OldItem, object UpdatedItem )
-		{
-			try
-			{
-				Variable ExistingVariable = VariablesList.First( x => x.Name.Equals( OldItem ) );
-				int index = VariablesList.IndexOf( ExistingVariable );
-				VariablesList[index].Name = ( UpdatedItem as Variable ).Name;
-				VariablesList[index].Value = ( UpdatedItem as Variable ).Value;
-			}
-			catch
-			{
-				VariablesList.Add( ( Variable ) UpdatedItem );
-			}
-		}
-	}
+                return false;
+            }
+        }
+
+        /// <summary> Get the variable list </summary>
+        /// <returns>The variable list</returns>
+        public ObservableCollection<AhkVariable> VariableList
+        {
+            get => _variableList;
+            set
+            {
+                _variableList = value;
+                OnPropertyChanged( "VariableList" );
+            }
+        }
+
+        [XmlIgnore]
+        public bool VariablesUpdated
+        {
+            get; set;
+        }
+
+        /// <summary> Add a new variable </summary>
+        /// <param name="item">The variable to be added</param>
+        public void Add ( AhkVariable item )
+        {
+            VariableList.Add( item );
+        }
+
+        public bool AnySelected ()
+        {
+            return CurrentlyActive != null;
+        }
+
+        public bool NameExists ( string name )
+        {
+            return CurrentlyActive == null
+                ? VariableList.Any( x => x.Name.Equals( name, StringComparison.OrdinalIgnoreCase ) )
+                : VariableList.Where( x => !x.Id.Equals( CurrentlyActive.Id ) ).Any( x => x.Name.Equals( name, StringComparison.OrdinalIgnoreCase ) );
+        }
+
+        public void Remove ()
+        {
+            if ( CurrentlyActive.IsNew )
+            {
+                CurrentlyActive = null;
+                OnPropertyChanged( "CurrentlyActive" );
+            }
+            else
+            {
+                _ = VariableList.Remove( VariableList.First( x => x.Id.Equals( CurrentlyActive.Id ) ) );
+
+                OnPropertyChanged( "Name" );
+                OnPropertyChanged( "VariableList" );
+            }
+        }
+
+        public void SaveCurrentlyActive ()
+        {
+            if ( CurrentlyActive.IsNew )
+            {
+                Add( CurrentlyActive );
+            }
+            else
+            {
+                VariableList.First( x => x.Id.Equals( CurrentlyActive.Id ) ).Update( CurrentlyActive );
+            }
+
+            VariablesUpdated = true;
+            OnPropertyChanged( "VariableList" );
+            OnPropertyChanged( "SelectedVariable" );
+        }
+
+        public bool VerifyValid ()
+        {
+            if ( CurrentlyActive == null )
+            {
+                MessageQueue.Clear();
+            }
+            else
+            {
+                if ( string.IsNullOrEmpty( CurrentlyActive.Name ) )
+                {
+                    MessageQueue.Add( new Message( Localization.Localization.ValidationErrorVariableNameEmpty ) );
+                }
+
+                if ( Regex.IsMatch( CurrentlyActive.Name, "\\s+" ) )
+                {
+                    MessageQueue.Add( new Message( Localization.Localization.ValidationErrorVariableNameContainsWhiteSpace ) );
+                }
+
+                if ( string.IsNullOrEmpty( CurrentlyActive.Value ) )
+                {
+                    MessageQueue.Add( new Message( Localization.Localization.ValidationWarningVariableValueEmpty ) );
+                }
+            }
+
+            return !MessageQueue.Any( x => x.Type == MessageType.Error ) && !Unchanged;
+        }
+
+        private void OnPropertyChanged ( string PropertyName )
+        {
+            PropertyChanged?.Invoke( this, new PropertyChangedEventArgs( PropertyName ) );
+        }
+    }
 }

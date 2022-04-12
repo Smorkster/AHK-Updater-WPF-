@@ -1,55 +1,86 @@
-﻿using System.ComponentModel;
+﻿using AHKUpdater.Library;
+using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Xml.Serialization;
 
-namespace AHK_Updater.Models
+namespace AHKUpdater.Model
 {
-	public class Setting : IType
-	{
-		public Setting () { }
-		public Setting ( string Name, string Text, string DefaultValue )
-		{
-			this.Name = Name;
-			this.Value = Text;
-			this.DefaultValue = DefaultValue;
-		}
+    public class Setting : INotifyPropertyChanged, IType
+    {
+        internal static Action OnItemChanged;
+        private ObservableCollection<string> _availableValues = new ObservableCollection<string>();
+        private Guid _id = Guid.NewGuid();
+        private string _value;
 
-		public string this[string propertyName] => throw new System.NotImplementedException();
+        public Setting () { }
 
-		[XmlAttribute( "Name" )]
-		public string Name 
-		{
-			get { return Name; }
-			set 
-			{
-				Name = value;
-				OnPropertyChanged( "Name" );
-			}
-		}
+        public event PropertyChangedEventHandler PropertyChanged;
 
-		[XmlAttribute( "Value" )]
-		public string Value
-		{
-			get { return Value; }
-			set
-			{
-				Value = value;
-				OnPropertyChanged( "SettingValue" );
-			}
-		}
+        [XmlIgnore]
+        public ObservableCollection<string> AvailableValues
+        {
+            get => _availableValues;
+            set
+            {
+                _availableValues = value;
+                OnPropertyChanged( "AvailableValues" );
+            }
+        }
 
-		[XmlAttribute( "DefaultValue" )]
-		public string DefaultValue
-		{
-			get;
-		}
+        [XmlAttribute( "DefaultValue" )]
+        public string DefaultValue { get; set; }
 
-		public event PropertyChangedEventHandler PropertyChanged;
-		private void OnPropertyChanged ( string PropertyName )
-		{
-			if ( PropertyChanged != null )
-			{
-				PropertyChanged( this, new PropertyChangedEventArgs( PropertyName ) );
-			}
-		}
-	}
+        [XmlIgnore]
+        public string DisplayName => Name.ToDisplayName();
+
+        [XmlIgnore]
+        public Guid Id => _id;
+
+        [XmlIgnore]
+        public bool IsNew { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        [XmlAttribute( "Name" )]
+        public string Name { get; set; }
+
+        [XmlIgnore]
+        public string SavedValue { get; set; }
+
+        [XmlAttribute( "SettingGroup" )]
+        public string SettingGroup { get; set; }
+
+        [XmlAttribute( "SettingType" )]
+        public string SettingType { get; set; }
+
+        [XmlAttribute( "Value" )]
+        public string Value
+        {
+            get
+            {
+                return _value;
+            }
+            set
+            {
+                if ( string.IsNullOrEmpty( SavedValue ) )
+                { SavedValue = value; }
+                _value = value;
+                OnPropertyChanged( "Value" );
+                OnItemChanged.Invoke();
+            }
+        }
+
+        public void ResetToDefault ()
+        {
+            Value = DefaultValue;
+            OnPropertyChanged( "Value" );
+        }
+
+        internal void Update ( string s )
+        {
+            Value = s;
+            SavedValue = s;
+        }
+
+        private void OnPropertyChanged ( string PropertyName ) { PropertyChanged?.Invoke( this, new PropertyChangedEventArgs( PropertyName ) ); }
+    }
 }

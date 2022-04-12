@@ -1,133 +1,347 @@
-﻿using AHK_Updater.Library;
-using AHK_Updater.Models;
-using System;
-using System.IO;
+﻿using AHKUpdater.Library;
+using AHKUpdater.Model;
+using AHKUpdater.View;
+using System.ComponentModel;
+using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
+using System.Xml;
 using System.Xml.Serialization;
 
-namespace AHK_Updater.ViewModel
+namespace AHKUpdater.ViewModel
 {
-	[XmlRoot( "Ahk" )]
-	public class DataViewModel
-	{
-		public DataViewModel () { InitializeViewModels(); }
+    [XmlRoot( "Ahk" )]
+    public class DataViewModel : INotifyPropertyChanged
+    {
+        private ICommand _cmdAddFunForExtraction;
+        private ICommand _cmdAddHsForExtraction;
+        private ICommand _cmdAddVarForExtraction;
+        private ICommand _cmdNew;
+        private ICommand _cmdNewFunction;
+        private ICommand _cmdNewHotstring;
+        private ICommand _cmdNewVariable;
+        private ICommand _cmdSaveCurrentlyActiveFunction;
+        private ICommand _cmdSaveCurrentlyActiveHotstring;
+        private ICommand _cmdSaveCurrentlyActiveVariable;
+        private ICommand _cmdSaveToFile;
 
-		void InitializeViewModels()
-		{
-			HotstringViewModel = new HotstringSystemViewModel();
-			VariableViewModel = new VariableViewModel();
-			FunctionViewModel = new FunctionViewModel();
-			SettingViewModel = new SettingsViewModel();
-			ChangeViewModel = new ChangeViewModel();
-		}
+        public DataViewModel ()
+        {
+            HotstringVM = new HotstringViewModel();
+            VariableVM = new VariableViewModel();
+            FunctionVM = new FunctionViewModel();
+            SettingVM = new SettingViewModel();
+        }
 
-		[XmlElement( "Variables" )]
-		public VariableViewModel VariableViewModel { get; set; }
+        public void InitiateFull ()
+        {
+            EditorVM = new EditorViewModel();
+            ExtractionVM = new ExtractionViewModel();
+            ExtractionVM.InsertSettingsForExtraction( SettingVM );
+            ExtractionViewModel.action += RemovedFromExtraction;
+        }
 
-		[XmlElement("Hotstrings")]
-		public HotstringSystemViewModel HotstringViewModel { get; set; }
+        private void RemovedFromExtraction ( object obj )
+        {
+            if ( obj.GetType() == typeof( AhkFunction ) )
+            {
+                FunctionVM.FunctionList.Single( x => x.Id.Equals( ( (AhkFunction) obj ).Id ) ).UpForExtraction = false;
+                if ( FunctionVM.CurrentlyActive.Id.Equals( ( (AhkFunction) obj ).Id ) )
+                { FunctionVM.CurrentlyActive.UpForExtraction = false; }
+            }
+            else if ( obj.GetType() == typeof( AhkHotstring ) )
+            {
+                HotstringVM.HotstringList.Single( x => x.Id.Equals( ( (AhkHotstring) obj ).Id ) ).UpForExtraction = false;
+                if ( HotstringVM.CurrentlyActive.Id.Equals( ( (AhkHotstring) obj ).Id ) )
+                { HotstringVM.CurrentlyActive.UpForExtraction = false; }
+            }
+            else if ( obj.GetType() == typeof( AhkVariable ) )
+            {
+                VariableVM.VariableList.Single( x => x.Id.Equals( ( (AhkVariable) obj ).Id ) ).UpForExtraction = false;
+                if ( VariableVM.CurrentlyActive.Id.Equals( ( (AhkVariable) obj ).Id ) )
+                { VariableVM.CurrentlyActive.UpForExtraction = false; }
+            }
+        }
 
-		[XmlElement( "Functions" )]
-		public FunctionViewModel FunctionViewModel { get; set; }
+        public event PropertyChangedEventHandler PropertyChanged;
 
-		[XmlElement( "Settings" )]
-		public SettingsViewModel SettingViewModel { get; set; }
+        public ICommand CmdAddFunctionForExtraction => _cmdAddFunForExtraction ??= new RelayCommand<AhkFunction>( AddFunToExtract, CheckFunctionInExtractionList );
 
-		[XmlElement( "Changes" )]
-		public ChangeViewModel ChangeViewModel { get; set; }
+        public ICommand CmdAddHotstringForExtraction => _cmdAddHsForExtraction ??= new RelayCommand<AhkHotstring>( AddHsToExtract, CheckHotstringInExtractionList );
 
-		public void Add ( Variable item )
-		{
-			VariableViewModel.Add( item );
-		}
+        public ICommand CmdAddVariableForExtraction => _cmdAddVarForExtraction ??= new RelayCommand<AhkVariable>( AddVarToExtract, CheckVariableInExtractionList );
 
-		public void Add ( Hotstring item )
-		{
-			HotstringViewModel.Add( item );
-		}
+        public ICommand CmdNew => _cmdNew ??= new RelayCommand<int>( New );
 
-		public void Add ( Function item )
-		{
-			FunctionViewModel.Add( item );
-		}
+        public ICommand CmdNewFunction => _cmdNewFunction ??= new RelayCommand( x => { NewFunction(); } );
 
-		public void Add ( Setting item )
-		{
-			SettingViewModel.Add( item );
-		}
+        public ICommand CmdNewHotstring => _cmdNewHotstring ??= new RelayCommand( x => { NewHotstring(); } );
 
-		public void Add ( Change item )
-		{
-			ChangeViewModel.Add( item );
-		}
+        public ICommand CmdNewVariable => _cmdNewVariable ??= new RelayCommand( x => { NewVariable(); } );
 
-		public void Remove ( Variable item )
-		{
-			//VariableViewModel.Remove( VariableViewModel.First( x => x.Name.Equals( item.Name ) ) );
-		}
+        public ICommand CmdSaveCurrentFunction => _cmdSaveCurrentlyActiveFunction ??= new RelayCommand( x => { SaveCurrentFunction(); }, _ => VerifyValidFunction() );
 
-		/*public void Remove ( Hotstring item )
-		{
-			var HSToRemove = HotstringViewModel.HotstringsList.First( x => x.Name.Equals( item.Name ) );
-			HotstringViewModel.HotstringsList.Remove( HSToRemove );
-			if ( !HotstringViewModel.HotstringsList.Any( x => x.System.Equals( item.System ) ) )
-			{
-				HotstringViewModel.HotstringSystems.Remove( HotstringViewModel.HotstringSystems.First( x => x.System.Equals( item.System ) ) );
-			}
-		}*/
+        public ICommand CmdSaveCurrentHotstring => _cmdSaveCurrentlyActiveHotstring ??= new RelayCommand( x => { SaveCurrentHotstring(); }, _ => VerifyValidHotstring() );
 
-		public void Remove ( Function item )
-		{
-			//VariableViewModel.Remove( VariableViewModel.First( x => x.Name.Equals( item.Name ) ) );
-		}
+        public ICommand CmdSaveCurrentVariable => _cmdSaveCurrentlyActiveVariable ??= new RelayCommand( x => { SaveCurrentVariable(); }, _ => VerifyValidVariable() );
 
-		public void Remove ( Setting item )
-		{
-			//VariableViewModel.Remove( VariableViewModel.First( x => x.Name.Equals( item.Name ) ) );
-		}
+        public ICommand CmdSaveToFile => _cmdSaveToFile ??= new RelayCommand( x => { SaveToFile(); }, p => CheckAnythingUpdated() );
 
-		public void Remove ( Change item )
-		{
-			//VariableViewModel.Remove( VariableViewModel.First( x => x.Name.Equals( item.Name ) ) );
-		}
+        [XmlIgnore]
+        public EditorViewModel EditorVM
+        {
+            get; set;
+        }
 
-		public void Update ( Variable item )
-		{ }
+        [XmlIgnore]
+        public ExtractionViewModel ExtractionVM { get; private set; }
 
-		public void Update ( Hotstring item )
-		{ }
+        [XmlElement( "Functions" )]
+        public FunctionViewModel FunctionVM
+        {
+            get; set;
+        }
 
-		public void Update ( Function item )
-		{ }
+        [XmlElement( "Hotstrings" )]
+        public HotstringViewModel HotstringVM
+        {
+            get; set;
+        }
 
-		public void Update ( Setting item )
-		{ }
+        [XmlElement( "Settings" )]
+        public SettingViewModel SettingVM
+        {
+            get; set;
+        }
 
-		public void Update ( Change item )
-		{ }
+        [XmlElement( "Variables" )]
+        public VariableViewModel VariableVM
+        {
+            get; set;
+        }
 
-		public Hotstring CopyHotstring ( Hotstring toCopy )
-		{
-			return new Hotstring( toCopy );
-		}
+        [XmlIgnore]
+        public string XmlFile
+        {
+            get; internal set;
+        }
 
-		ICommand _cmdSaveFile;
-		public ICommand CmdSaveFile { get { return _cmdSaveFile ?? ( _cmdSaveFile = new RelayCommand( x => { SaveFile(); }, predicate => CheckUpdated() ) ); } }
+        public void MainWindow_Closing ( object sender, CancelEventArgs e )
+        {
+            if ( CheckAnythingUpdated() )
+            {
+                if ( MessageBox.Show( Localization.Localization.MsgSaveBeforeClosing, "", MessageBoxButton.YesNo ) == MessageBoxResult.Yes )
+                {
+                    CustomMessageBox cmd = new CustomMessageBox( Localization.Localization.MsgQSaveBeforeClosing,
+                                                                Localization.Localization.MsgQSaveBeforeClosingTitle,
+                                                                new string[] { Localization.Localization.MsgQSaveBeforeClosingBtn1,
+                                                                Localization.Localization.MsgQSaveBeforeClosingBtn2,
+                                                                Localization.Localization.MsgQSaveBeforeClosingBtn3 } );
+                    cmd.ShowDialog();
+                    if ( cmd.Answer() != 2 )
+                    {
+                        SaveToFile();
+                    }
+                }
+            }
+        }
 
-		private bool CheckUpdated ()
-		{
-			return HotstringViewModel.HotstringsUpdated;
-		}
+        private void AddFunToExtract ( AhkFunction o )
+        {
+            o.UpForExtraction = true;
+            FunctionVM.FunctionList.Single( x => x.Id.Equals( o.Id ) ).UpForExtraction = true;
+            ExtractionVM.AddToExtraction( o );
+        }
 
-		private void SaveFile ()
-		{
-			using ( FileStream stream = new FileStream( @"C:\Users\6g1w\Documents\t.xml", FileMode.Create ) )
-			{
-				var xsz = new XmlSerializer( this.GetType() );
-				xsz.Serialize( stream, this );
-			}
-		}
-	}
+        private void AddHsToExtract ( AhkHotstring o )
+        {
+            o.UpForExtraction = true;
+            HotstringVM.HotstringList.Single( x => x.Id.Equals( o.Id ) ).UpForExtraction = true;
+            ExtractionVM.AddToExtraction( o );
+        }
+
+        private void AddVarToExtract ( AhkVariable o )
+        {
+            o.UpForExtraction = true;
+            VariableVM.VariableList.First( x => x.Id.Equals( o.Id ) ).UpForExtraction = true;
+            ExtractionVM.AddToExtraction( o );
+        }
+
+        /// <summary>Check if anything have been updated</summary>
+        /// <returns>True if anything have been updated</returns>
+        private bool CheckAnythingUpdated ()
+        {
+            return HotstringVM.HotstringsUpdated || FunctionVM.FunctionsUpdated || VariableVM.VariablesUpdated || SettingVM.SettingsUpdated;
+        }
+
+        private bool CheckFunctionInExtractionList ( AhkFunction obj ) => obj != null && !obj.UpForExtraction;
+
+        private bool CheckHotstringInExtractionList ( AhkHotstring obj ) => obj != null && !obj.UpForExtraction;
+
+        private bool CheckVariableInExtractionList ( AhkVariable obj ) => obj != null && !obj.UpForExtraction;
+
+        /// <summary>Creates a new object, depending on which tab is selected</summary>
+        /// <param name="selectedTabIndex">Index of the tabitem that is currently selected</param>
+        private void New ( int selectedTabIndex )
+        {
+            if ( selectedTabIndex == 0 )
+            {
+                NewHotstring();
+            }
+            else if ( selectedTabIndex == 1 )
+            {
+                NewVariable();
+            }
+            else if ( selectedTabIndex == 2 )
+            {
+                NewFunction();
+            }
+        }
+
+        /// <summary>Creates a new, empty function</summary>
+        private void NewFunction ()
+        {
+            FunctionVM.CurrentlyActive = new AhkFunction( true );
+        }
+
+        /// <summary>Creates a new, empty hotstring</summary>
+        private void NewHotstring ()
+        {
+            HotstringVM.CurrentlyActive = new AhkHotstring( true );
+        }
+
+        /// <summary>Creates a new, empty variable</summary>
+        private void NewVariable ()
+        {
+            VariableVM.CurrentlyActive = new AhkVariable( true );
+        }
+
+        private void OnPropertyChanged ( string PropertyName )
+        {
+            PropertyChanged?.Invoke( this, new PropertyChangedEventArgs( PropertyName ) );
+        }
+
+        private void SaveCurrentFunction ()
+        {
+            FunctionVM.SaveCurrentlyActive();
+        }
+
+        private void SaveCurrentHotstring ()
+        {
+            HotstringVM.SaveCurrentlyActive();
+        }
+
+        private void SaveCurrentVariable ()
+        {
+            VariableVM.SaveCurrentlyActive();
+        }
+
+        /// <summary>Save data to XML-file</summary>
+        private void SaveToFile ()
+        {
+            FileHandler.WriteXml( this );
+            FileHandler.WriteScript( this );
+
+            FunctionVM.FunctionsUpdated = HotstringVM.HotstringsUpdated = VariableVM.VariablesUpdated = SettingVM.SettingsUpdated = false;
+        }
+
+        private bool VerifyValidFunction ()
+        {
+            FunctionVM.MessageQueue.Clear();
+            if ( FunctionVM.CurrentlyActive == null )
+            {
+                return false;
+            }
+            else if ( HotstringVM.NameExists( FunctionVM.CurrentlyActive.Name ) )
+            {
+                FunctionVM.MessageQueue.Add( new Message( Localization.Localization.ValidationErrorNameAlreadyInUseAsHotstring ) );
+                return false;
+            }
+            else if ( VariableVM.NameExists( FunctionVM.CurrentlyActive.Name ) )
+            {
+                FunctionVM.MessageQueue.Add( new Message( Localization.Localization.ValidationErrorNameAlreadyInUseAsVariable ) );
+                return false;
+            }
+            else if ( FunctionVM.NameExists( FunctionVM.CurrentlyActive.Name ) )
+            {
+                FunctionVM.MessageQueue.Add( new Message( Localization.Localization.ValidationErrorFunctionNameAlreadyInUse ) );
+                return false;
+            }
+            else if ( SettingVM.NameExists( FunctionVM.CurrentlyActive.Name ) )
+            {
+                FunctionVM.MessageQueue.Add( new Message( Localization.Localization.ValidationErrorNameAlreadyInUseAsSetting ) );
+                return false;
+            }
+            else
+            {
+                return FunctionVM.VerifyValid();
+            }
+        }
+
+        private bool VerifyValidHotstring ()
+        {
+            HotstringVM.MessageQueue.Clear();
+            if ( HotstringVM.CurrentlyActive == null )
+            {
+                return false;
+            }
+            else if ( HotstringVM.NameExists( HotstringVM.CurrentlyActive.Name ) )
+            {
+                HotstringVM.MessageQueue.Add( new Message( Localization.Localization.ValidationErrorNameAlreadyInUseAsHotstring ) );
+                return false;
+            }
+            else if ( VariableVM.NameExists( HotstringVM.CurrentlyActive.Name ) )
+            {
+                HotstringVM.MessageQueue.Add( new Message( Localization.Localization.ValidationErrorNameAlreadyInUseAsVariable ) );
+                return false;
+            }
+            else if ( FunctionVM.NameExists( HotstringVM.CurrentlyActive.Name ) )
+            {
+                HotstringVM.MessageQueue.Add( new Message( Localization.Localization.ValidationErrorFunctionNameAlreadyInUse ) );
+                return false;
+            }
+            else if ( SettingVM.NameExists( HotstringVM.CurrentlyActive.Name ) )
+            {
+                HotstringVM.MessageQueue.Add( new Message( Localization.Localization.ValidationErrorNameAlreadyInUseAsSetting ) );
+                return false;
+            }
+            else
+            {
+                return HotstringVM.VerifyValid();
+            }
+        }
+
+        private bool VerifyValidVariable ()
+        {
+            VariableVM.MessageQueue.Clear();
+            if ( VariableVM.CurrentlyActive == null )
+            {
+                return false;
+            }
+            else if ( HotstringVM.NameExists( VariableVM.CurrentlyActive.Name ) )
+            {
+                VariableVM.MessageQueue.Add( new Message( Localization.Localization.ValidationErrorNameAlreadyInUseAsHotstring ) );
+                return false;
+            }
+            else if ( VariableVM.NameExists( VariableVM.CurrentlyActive.Name ) )
+            {
+                VariableVM.MessageQueue.Add( new Message( Localization.Localization.ValidationErrorNameAlreadyInUseAsVariable ) );
+                return false;
+            }
+            else if ( FunctionVM.NameExists( VariableVM.CurrentlyActive.Name ) )
+            {
+                VariableVM.MessageQueue.Add( new Message( Localization.Localization.ValidationErrorFunctionNameAlreadyInUse ) );
+                return false;
+            }
+            else if ( SettingVM.NameExists( VariableVM.CurrentlyActive.Name ) )
+            {
+                VariableVM.MessageQueue.Add( new Message( Localization.Localization.ValidationErrorNameAlreadyInUseAsSetting ) );
+                return false;
+            }
+            else
+            {
+                return VariableVM.VerifyValid();
+            }
+        }
+    }
 }

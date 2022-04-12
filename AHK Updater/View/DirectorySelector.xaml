@@ -1,0 +1,104 @@
+﻿<Window x:Class="AHKUpdater.View.DirectorySelector" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:Converter="clr-namespace:AHKUpdater.Converters" xmlns:Design="http://schemas.microsoft.com/expression/blend/2008" xmlns:Localization="clr-namespace:AHKUpdater.Localization" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:ViewModel="clr-namespace:AHKUpdater.ViewModel" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Design:DataContext="{Design:DesignInstance Type=ViewModel:DirectorySelectorViewModel}" mc:Ignorable="Design" x:Name="Window">
+    <Window.MinHeight>80</Window.MinHeight>
+    <Window.MinWidth>800</Window.MinWidth>
+    <Window.DataContext>
+        <ViewModel:DirectorySelectorViewModel />
+    </Window.DataContext>
+    <Window.Resources>
+        <Converter:IsHidden x:Key="TestHidden" />
+        <Converter:IsSystem x:Key="TestSystem" />
+    </Window.Resources>
+    <Window.SizeToContent>WidthAndHeight</Window.SizeToContent>
+    <Window.WindowStartupLocation>CenterScreen</Window.WindowStartupLocation>
+    <Grid>
+        <Grid.Resources>
+            <Style TargetType="Button">
+                <Setter Property="Margin" Value="5" />
+                <Setter Property="Padding" Value="5" />
+            </Style>
+            <Style TargetType="ListView">
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Margin" Value="5" />
+                <Setter Property="Padding" Value="5" />
+            </Style>
+            <Style TargetType="ListViewItem">
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Margin" Value="5" />
+                <Setter Property="Padding" Value="5" />
+            </Style>
+            <Style TargetType="TextBox" x:Key="TbBaseStyle">
+                <Setter Property="BorderBrush" Value="Black" />
+                <Setter Property="Margin" Value="5" />
+                <Setter Property="Padding" Value="5" />
+            </Style>
+        </Grid.Resources>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" MaxHeight="300" />
+        </Grid.RowDefinitions>
+        <TextBox x:Name="TbSelectedPath">
+            <TextBox.Style>
+                <Style TargetType="TextBox" BasedOn="{StaticResource TbBaseStyle}">
+                    <Setter Property="Text" Value="{Binding Path=CurrentPath, UpdateSourceTrigger=PropertyChanged}" />
+                </Style>
+            </TextBox.Style>
+        </TextBox>
+        <Button Grid.Column="1" Command="{Binding CmdSelect}" CommandParameter="{Binding ElementName=Window}" Content="{x:Static Localization:Localization.BtnSelectPathContent}" />
+        <Button Grid.Column="2" Command="{Binding CmdCancel}" CommandParameter="{Binding ElementName=Window}" Content="{x:Static Localization:Localization.BtnCancelPathContent}" />
+        <Grid Grid.Row="2" Grid.ColumnSpan="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}}, Path=ColumnDefinitions.Count}">
+            <DataGrid x:Name="DgSuggestedPaths" AutoGenerateColumns="False" HeadersVisibility="Column" ItemsSource="{Binding SuggestedPaths, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" DisplayMemberPath="Path.FullName">
+                <DataGrid.InputBindings>
+                    <MouseBinding Gesture="LeftDoubleClick" Command="{Binding CmdRowClicked}" CommandParameter="{Binding ElementName=DgSuggestedPaths, Path=SelectedItem}" />
+                    <MouseBinding Gesture="LeftClick" Command="{Binding CmdRowClicked}" CommandParameter="{Binding ElementName=DgSuggestedPaths, Path=SelectedItem}" />
+                </DataGrid.InputBindings>
+                <DataGrid.RowStyle>
+                    <Style TargetType="{x:Type DataGridRow}">
+                        <Setter Property="IsEnabled" Value="True" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=Path.Attributes, Converter={StaticResource TestHidden}}" Value="True">
+                                <Setter Property="Background" Value="MistyRose" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Path=Path.Attributes, Converter={StaticResource TestSystem}}" Value="True">
+                                <Setter Property="Background" Value="GainsBoro" />
+                                <Setter Property="IsEnabled" Value="False" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.RowStyle>
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="{x:Static Localization:Localization.SuggestedPathHeader}" Width="500">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=Path.FullName}">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="FontWeight" Value="Normal" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow}, Path=Item.SameAsCurrent}" Value="True">
+                                                    <Setter Property="FontWeight" Value="Bold" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="{x:Static Localization:Localization.SuggestedPathAttributesHeader}">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=Path.Attributes}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+    </Grid>
+</Window>

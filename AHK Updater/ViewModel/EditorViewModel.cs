@@ -1,56 +1,48 @@
-﻿using AHK_Updater.Models;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 
-namespace AHK_Updater.ViewModel
+namespace AHKUpdater.ViewModel
 {
-	public class EditorViewModel : INotifyPropertyChanged
-	{
-		public EditorViewModel ()
-		{
-			EditorsList = new ObservableCollection<FileInfo>();
-		}
+    public class EditorViewModel : INotifyPropertyChanged
+    {
+        public EditorViewModel ()
+        {
+            EditorsList = new ObservableCollection<FileInfo>();
+            GenerateEditorList();
+        }
 
-		public bool AddEditor ( string EditorPath )
-		{
-			if ( File.Exists( EditorPath ) )
-			{
-				//Editor NewEditor = new Editor( EditorPath );
-				EditorsList.Add( new FileInfo( EditorPath ) );
-				OnPropertyChanged( "EditorList" );
-			}
-			return false;
-		}
+        public event PropertyChangedEventHandler PropertyChanged;
 
-		public void GenerateEditorList ()
-		{
-			string[] SuggestedEditors = { @"C:\Program Files\Notepad++\notepad++.exe", @"C:\Program Files (x86)\Notepad++\notepad++.exe", @"C:\Windows\System32\notepad.exe" };
-			foreach ( string editor in SuggestedEditors )
-			{ _ = AddEditor( editor ); }
-		}
+        public ObservableCollection<FileInfo> EditorsList { get; }
 
-		public ObservableCollection<FileInfo> EditorsList { get; }
+        public void AddEditor ( string EditorPath )
+        {
+            if ( File.Exists( EditorPath ) )
+            {
+                EditorsList.Add( new FileInfo( EditorPath ) );
+                OnPropertyChanged( "EditorList" );
+            }
+        }
 
-		public bool ListContainsName ( string Text )
-		{
-			return EditorsList.Any( x => x.Name.Equals( Text ) );
-		}
+        public void GenerateEditorList ()
+        {
+            string[] SuggestedEditors = { @"C:\Program Files\Notepad++\notepad++.exe", @"C:\Program Files (x86)\Notepad++\notepad++.exe", @"C:\Windows\System32\notepad.exe" };
+            foreach ( string editor in SuggestedEditors )
+            { AddEditor( editor ); }
+        }
 
-		public bool ListContainsPath ( string Text )
-		{
-			return EditorsList.Any( x => x.FullName.Equals( Text ) );
-		}
+        public bool ListContainsName ( string Text )
+        {
+            return EditorsList.Any( x => x.Name.Equals( Text, System.StringComparison.OrdinalIgnoreCase ) );
+        }
 
-		public event PropertyChangedEventHandler PropertyChanged;
-		private void OnPropertyChanged ( string PropertyName )
-		{
-			if ( PropertyChanged != null )
-			{
-				PropertyChanged( this, new PropertyChangedEventArgs( PropertyName ) );
-			}
-		}
-	}
+        public bool ListContainsPath ( string Text )
+        {
+            return EditorsList.Any( x => x.FullName.Equals( Text, System.StringComparison.OrdinalIgnoreCase ) );
+        }
+
+        private void OnPropertyChanged ( string PropertyName ) { PropertyChanged?.Invoke( this, new PropertyChangedEventArgs( PropertyName ) ); }
+    }
 }

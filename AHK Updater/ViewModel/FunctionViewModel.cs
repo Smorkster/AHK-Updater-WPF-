@@ -1,101 +1,256 @@
-﻿using System.Collections.ObjectModel;
+﻿using AHKUpdater.Library;
+using AHKUpdater.Library.Enums;
+using AHKUpdater.Model;
+using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Text.RegularExpressions;
+using System.Windows.Input;
+using System.Xml.Serialization;
 
-namespace AHK_Updater.Models
+namespace AHKUpdater.ViewModel
 {
-	/// <summary>
-	/// Model containing all data for functions
-	/// </summary>
-	public class FunctionViewModel : IData
-	{
-		public FunctionViewModel () { FunctionsList = new ObservableCollection<Function>(); }
+    /// <summary> Model containing all data for functions </summary>
+    public class FunctionViewModel : INotifyPropertyChanged, IViewModel
+    {
+        private ICommand _cmdAddParameter;
+        private ICommand _cmdRemove;
+        private ICommand _cmdRemoveParameter;
+        private AhkFunction _currentlyActive;
+        private MessageCollection _messageQueue = new MessageCollection();
 
-		public FunctionViewModel ( ObservableCollection<Function> functions ) { FunctionsList = functions; }
+        public FunctionViewModel ()
+        {
+            FunctionList = new ObservableCollection<AhkFunction>();
+            CurrentlyActive = null;
+            Parameter.OnItemChanged += OnParameterChanged;
+        }
 
-		/// <summary>
-		/// Adds a new function
-		/// </summary>
-		/// <param name="item">A new function</param>
-		public void Add ( object item )
-		{
-			FunctionsList.Add( ( Function ) item );
-		}
+        public FunctionViewModel ( ObservableCollection<AhkFunction> functions )
+        {
+            FunctionList = functions;
+            CurrentlyActive = null;
+            Parameter.OnItemChanged += OnParameterChanged;
+        }
 
-		/// <summary>
-		/// Deletes a function from the list
-		/// </summary>
-		/// <param name="name">Name of function to be removed</param>
-		public void Delete ( string name )
-		{
-			Function item = FunctionsList.Single( x => x.Name.Equals( name ) );
-			FunctionsList.Remove( item );
-		}
+        public event PropertyChangedEventHandler PropertyChanged;
 
-		/// <summary>
-		/// Checks if there is already a function existing with given name
-		/// </summary>
-		/// <param name="name">Name of eventual new function to check with</param>
-		/// <returns>True if there is a function existing with given name. Otherwise false</returns>
-		public bool Exists ( string name )
-		{
-			foreach ( Function item in FunctionsList )
-				if ( item.Name.Equals( name ) )
-					return true;
-			return false;
-		}
+        public ICommand CmdAddParameter => _cmdAddParameter ??= new RelayCommand<AhkFunction>( AddParameter );
 
-		/// <summary>
-		/// Get a function-object based on its name
-		/// </summary>
-		/// <param name="name">Name of function to search for</param>
-		/// <returns>A function-object related to the name given on calling</returns>
-		public Function Get ( string name )
-		{
-			return FunctionsList.Single( x => x.Name.Equals( name ) );
-		}
+        public ICommand CmdRemove => _cmdRemove ??= new RelayCommand( x => { Remove(); }, p => AnySelected() );
 
-		/// <summary>
-		/// Returns all saved functions as a list
-		/// </summary>
-		/// <returns>Functions as a list</returns>
-		public ObservableCollection<Function> FunctionsList
-		{
-			get;
-		}
+        public ICommand CmdRemoveParameter => _cmdRemoveParameter ??= new RelayCommand<Parameter>( RemoveParameter );
 
-		public string this[string propertyName] => throw new System.NotImplementedException();
+        [XmlIgnore]
+        public AhkFunction CurrentlyActive
+        {
+            get => _currentlyActive;
+            set
+            {
+                _currentlyActive = value;
+                OnPropertyChanged( "CurrentlyActive" );
+                OnPropertyChanged( "FunctionHeader" );
+            }
+        }
 
-		/// <summary>
-		/// Collect the names of all functions
-		/// </summary>
-		/// <returns>String-array of all functionnames</returns>
-		public string GetNamesString ()
-		{
-			string s = "";
-			foreach ( Function f in FunctionsList )
-				s = s + " " + f.Name;
+        [XmlIgnore]
+        public MessageCollection MessageQueue
+        {
+            get => _messageQueue;
+            set
+            {
+                _messageQueue = value;
+                OnPropertyChanged( "MessageQueue" );
+            }
+        }
 
-			return s.Trim();
-		}
+        [XmlIgnore]
+        public string FunctionHeader
+        {
+            get
+            {
+                string header;
 
-		/// <summary>
-		/// Update an existing hotstring 
-		/// </summary>
-		/// <param name="old">Name of hotstring to be updated</param>
-		/// <param name="item">Updated hotstring</param>
-		public void Update ( string old, object item )
-		{
-			try
-			{
-				Function h = FunctionsList.First( x => x.Name.Equals( old ) );
-				int index = FunctionsList.IndexOf( h );
-				FunctionsList[index].Name = ( item as Function ).Name;
-				FunctionsList[index].Value = ( item as Function ).Value;
-			}
-			catch
-			{
-				FunctionsList.Add( ( Function ) item );
-			}
-		}
-	}
+                if ( CurrentlyActive == null || CurrentlyActive.ParameterList == null )
+                {
+                    header = "";
+                }
+                else if ( CurrentlyActive.ParameterList.Count > 0 )
+                {
+                    string parameters = "";
+                    foreach ( Parameter p in CurrentlyActive.ParameterList )
+                    {
+                        parameters = string.IsNullOrEmpty( parameters )
+                              ? $"{ p.Name }"
+                              : $"{ parameters }, { p.Name }";
+                    }
+                    header = $"{ CurrentlyActive.Name }( { parameters } )";
+                }
+                else
+                {
+                    header = $"{ CurrentlyActive.Name }";
+                }
+                return header;
+            }
+        }
+
+        /// <summary> Returns all saved functions as a list </summary>
+        /// <returns>Functions as a list</returns>
+        public ObservableCollection<AhkFunction> FunctionList
+        {
+            get;
+        }
+
+        [XmlIgnore]
+        public bool FunctionsUpdated
+        {
+            get; set;
+        }
+
+        [XmlIgnore]
+        public bool Unchanged
+        {
+            get
+            {
+                try
+                {
+                    if ( FunctionList.Count > 0 )
+                    {
+                        AhkFunction temp = FunctionList.First( x => x.Id.Equals( CurrentlyActive.Id ) );
+                        if ( temp.Equal( CurrentlyActive ) )
+                        {
+                            return true;
+                        }
+                    }
+                }
+                catch ( InvalidOperationException ) { }
+
+                return false;
+            }
+        }
+
+        /// <summary> Adds a new function </summary>
+        /// <param name="item">A new function</param>
+        public void Add ( object item )
+        {
+            FunctionList.Add( (AhkFunction) item );
+            OnPropertyChanged( "FunctionsList" );
+        }
+
+        /// <summary> Verify if a function is selected </summary>
+        /// <returns>Boolean for if any function is selected</returns>
+        public bool AnySelected ()
+        {
+            return CurrentlyActive != null;
+        }
+
+        public bool NameExists ( string name )
+        {
+            return CurrentlyActive == null
+                ? FunctionList.Any( x => x.Name.Equals( name, StringComparison.OrdinalIgnoreCase ) )
+                : FunctionList.Where( x => !x.Id.Equals( CurrentlyActive.Id ) ).Any( x => x.Name.Equals( name, StringComparison.OrdinalIgnoreCase ) );
+        }
+
+        /// <summary> Remove the currently active function </summary>
+        public void Remove ()
+        {
+            _ = FunctionList.Remove( FunctionList.First( x => x.Id.Equals( CurrentlyActive.Id ) ) );
+            FunctionsUpdated = true;
+            OnPropertyChanged( "FunctionList" );
+        }
+
+        /// <summary> Save the currently active function </summary>
+        public void SaveCurrentlyActive ()
+        {
+            if ( CurrentlyActive.IsNew )
+            {
+                Add( CurrentlyActive );
+                CurrentlyActive.IsNew = false;
+            }
+            else
+            {
+                FunctionList.First( x => x.Id.Equals( CurrentlyActive.Id ) ).Update( CurrentlyActive );
+            }
+
+            FunctionsUpdated = true;
+            OnPropertyChanged( "FunctionsList" );
+            OnPropertyChanged( "Name" );
+        }
+
+        public bool VerifyValid ()
+        {
+            MessageQueue.Clear();
+            if ( CurrentlyActive == null )
+            {
+                return false;
+            }
+            else
+            {
+                #region CheckName
+                if ( string.IsNullOrEmpty( CurrentlyActive.Name ) )
+                {
+                    MessageQueue.Add( new Message( Localization.Localization.ValidationErrorFunctionNameEmpty ) );
+                }
+                else
+                {
+                    MessageQueue.RemoveMessage( Localization.Localization.ValidationErrorFunctionNameEmpty );
+                }
+
+                if ( string.IsNullOrEmpty( CurrentlyActive.Value ) )
+                {
+                    MessageQueue.Add( new Message( Localization.Localization.ValidationErrorFunctionCodeEmpty ) );
+                }
+                else
+                {
+                    MessageQueue.RemoveMessage( Localization.Localization.ValidationErrorFunctionCodeEmpty );
+                }
+
+                if ( CurrentlyActive.Name == null )
+                { }
+                else if ( Regex.IsMatch( CurrentlyActive.Name, "\\s+" ) )
+                {
+                    MessageQueue.Add( new Message( Localization.Localization.ValidationErrorFunctionNameContainsWhiteSpace ) );
+                }
+                else
+                {
+                    MessageQueue.RemoveMessage( Localization.Localization.ValidationErrorFunctionNameContainsWhiteSpace );
+                }
+                #endregion
+
+                #region CheckParameters
+                foreach ( string p in CurrentlyActive.ParameterList.Select( x => x.Name ).Distinct() )
+                {
+                    if ( CurrentlyActive.ParameterList.Count( x => x.Name.Equals( p, StringComparison.OrdinalIgnoreCase ) ) > 1 )
+                    {
+                        MessageQueue.Add( new Message( $"{ Localization.Localization.ValidationErrorParameterNameAlreadyInUse } '{ p }'" ) );
+                    }
+                }
+                #endregion
+
+                return !MessageQueue.Any( x => x.Type == MessageType.Error ) && !Unchanged;
+            }
+        }
+
+        private void AddParameter ( AhkFunction fun )
+        {
+            fun.AddParameter();
+        }
+
+        private void OnParameterChanged ( Parameter obj )
+        {
+            OnPropertyChanged( "FunctionHeader" );
+        }
+
+        private void OnPropertyChanged ( string PropertyName )
+        {
+            PropertyChanged?.Invoke( this, new PropertyChangedEventArgs( PropertyName ) );
+        }
+
+        private void RemoveParameter ( Parameter obj )
+        {
+            _ = CurrentlyActive.ParameterList.Remove( CurrentlyActive.ParameterList.First( x => x.Name.Equals( obj.Name, StringComparison.OrdinalIgnoreCase ) ) );
+            OnPropertyChanged( "FunctionHeader" );
+        }
+    }
 }

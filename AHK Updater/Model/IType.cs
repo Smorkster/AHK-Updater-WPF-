@@ -1,14 +1,18 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 
-namespace AHK_Updater.Models
+namespace AHKUpdater.Model
 {
-	public interface IType
-	{
-		string this[string propertyName] { get; }
+    public interface IType
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
 
-		string Name { get; set; }
-		string Value { get; set; }
+        Guid Id { get; }
 
-		public event PropertyChangedEventHandler PropertyChanged;
-	}
+        bool IsNew { get; set; }
+
+        string Name { get; set; }
+
+        string Value { get; set; }
+    }
 }

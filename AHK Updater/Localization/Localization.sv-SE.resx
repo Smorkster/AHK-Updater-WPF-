@@ -1,0 +1,414 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="BtnAddForExtractionContent" xml:space="preserve">
+    <value>Lägg till för extraktion</value>
+  </data>
+  <data name="BtnCancelExtractionContent" xml:space="preserve">
+    <value>Avbryt extraktion</value>
+  </data>
+  <data name="BtnCancelPathContent" xml:space="preserve">
+    <value>Avbryt</value>
+  </data>
+  <data name="BtnChangeSaveContent" xml:space="preserve">
+    <value>Spara changeinfo</value>
+  </data>
+  <data name="BtnDeleteContent" xml:space="preserve">
+    <value>Ta bort</value>
+  </data>
+  <data name="BtnEditorForOpeningFilesScriptContent" xml:space="preserve">
+    <value>Öppna skript</value>
+  </data>
+  <data name="BtnEditorForOpeningFilesXMLContent" xml:space="preserve">
+    <value>Öppna XML</value>
+  </data>
+  <data name="BtnExtractToScriptContent" xml:space="preserve">
+    <value>Extrahera till skript</value>
+  </data>
+  <data name="BtnExtractToXmlContent" xml:space="preserve">
+    <value>Extrahera till XML</value>
+  </data>
+  <data name="BtnFunctionAddParameterContent" xml:space="preserve">
+    <value>Lägg till parameter</value>
+  </data>
+  <data name="BtnFunctionRemoveParameterToolTip" xml:space="preserve">
+    <value>Ta bort parameter</value>
+  </data>
+  <data name="BtnFunctionSaveContent" xml:space="preserve">
+    <value>Spara funktion</value>
+  </data>
+  <data name="BtnGetSettingFolder" xml:space="preserve">
+    <value>Välj en mapp</value>
+  </data>
+  <data name="BtnHotstringSaveContent" xml:space="preserve">
+    <value>Spara hotstring</value>
+  </data>
+  <data name="BtnRemoveFromExtractListContent" xml:space="preserve">
+    <value>Ta bort från extraheringslistan</value>
+  </data>
+  <data name="BtnSaveContent" xml:space="preserve">
+    <value>Spara till fil</value>
+  </data>
+  <data name="BtnSaveSettingsContent" xml:space="preserve">
+    <value>Spara inställningar</value>
+  </data>
+  <data name="BtnSelectPathContent" xml:space="preserve">
+    <value>Välj</value>
+  </data>
+  <data name="BtnVariableSaveContent" xml:space="preserve">
+    <value>Spara variabel</value>
+  </data>
+  <data name="CbAdvancedHotstringContent" xml:space="preserve">
+    <value>Avancerad hotstring</value>
+  </data>
+  <data name="CbAdvancedHotstringToolTip" xml:space="preserve">
+    <value>En avancerad hotstring, ingen felkontroll görs på koden</value>
+  </data>
+  <data name="CbSaveWithMenuContent" xml:space="preserve">
+    <value>Inkludera GUI för meny</value>
+  </data>
+  <data name="CodeNewFunctionInfo" xml:space="preserve">
+    <value>Kod för funktionen här</value>
+  </data>
+  <data name="CodeNewParameter" xml:space="preserve">
+    <value>NyParameter</value>
+  </data>
+  <data name="ExpParametersHeader" xml:space="preserve">
+    <value>Parametrar</value>
+  </data>
+  <data name="GrpBoxApplicationSettingsHeader" xml:space="preserve">
+    <value>Applikations-inställningar</value>
+  </data>
+  <data name="GrpBoxFunctionSettingsHeader" xml:space="preserve">
+    <value>Funktionsinställningar</value>
+  </data>
+  <data name="GrpBoxFunctionSettingsScriptOperationsHeader" xml:space="preserve">
+    <value>Inställningar för skript</value>
+  </data>
+  <data name="GrpBoxScriptSettingsHeader" xml:space="preserve">
+    <value>Skriptinställningar</value>
+  </data>
+  <data name="GrpBoxSectionTextsHeader" xml:space="preserve">
+    <value>Textavsnitt </value>
+  </data>
+  <data name="HotstringVerifySaveUnsavedEdit" xml:space="preserve">
+    <value>En hotstring håller på att redigeras, vill du spara denna?</value>
+  </data>
+  <data name="HotstringVerifySaveUnsavedEditNew" xml:space="preserve">
+    <value>En ny hotstring håller på att skapas, vill du spara denna?</value>
+  </data>
+  <data name="LblAhkMenuTriggerTitleContent" xml:space="preserve">
+    <value>Trigger för GUI-menyn</value>
+  </data>
+  <data name="LblChangeNameTitleContent" xml:space="preserve">
+    <value>Change datum</value>
+  </data>
+  <data name="LblEditorForOpeningFilesContent" xml:space="preserve">
+    <value>Välj redigerare att öppna filer med</value>
+  </data>
+  <data name="LblFunctionNameTitleContent" xml:space="preserve">
+    <value>Funktionsnamn</value>
+  </data>
+  <data name="LblHotstringMenuItemTitleContent" xml:space="preserve">
+    <value>Meny titel</value>
+  </data>
+  <data name="LblHotstringNameTitleContent" xml:space="preserve">
+    <value>Hotstring namn</value>
+  </data>
+  <data name="LblHotstringSystemTitleContent" xml:space="preserve">
+    <value>System</value>
+  </data>
+  <data name="LblSectionTextFunctionsTitleTitleContent" xml:space="preserve">
+    <value>Titel för funktions-avsnittet</value>
+  </data>
+  <data name="LblSectionTextHotstringsTitleTitleContent" xml:space="preserve">
+    <value>Titel för hotstrings-avsnittet</value>
+  </data>
+  <data name="LblSectionTextMenuActionTriggersTitleTitleContent" xml:space="preserve">
+    <value>Titel för menytriggers-avsnittet</value>
+  </data>
+  <data name="LblSectionTextMenuTitleTitleContent" xml:space="preserve">
+    <value>Titel för meny-avsnittet</value>
+  </data>
+  <data name="LblSectionTextTitleDeviderTitleTitleContent" xml:space="preserve">
+    <value>Tecken för titel avdelning</value>
+  </data>
+  <data name="LblSectionTextVariablesTitleTitleContent" xml:space="preserve">
+    <value>Titel för variabler-avsnittet</value>
+  </data>
+  <data name="LblVariableNameTitleContent" xml:space="preserve">
+    <value>Variabel namn</value>
+  </data>
+  <data name="LblVariableValueTitleContent" xml:space="preserve">
+    <value>Värde</value>
+  </data>
+  <data name="LvExtractListTitleContent" xml:space="preserve">
+    <value>Objekt att extrahera</value>
+  </data>
+  <data name="MainMenuNewCommand" xml:space="preserve">
+    <value>Nytt objekt</value>
+  </data>
+  <data name="MainMenuNewFunction" xml:space="preserve">
+    <value>Funktion</value>
+  </data>
+  <data name="MainMenuNewHotstring" xml:space="preserve">
+    <value>Hotstring</value>
+  </data>
+  <data name="MainMenuNewVariable" xml:space="preserve">
+    <value>Variabel</value>
+  </data>
+  <data name="MsgCultureChanged" xml:space="preserve">
+    <value>Den nya kulturen kommer användas nästa gång applikationen startas</value>
+  </data>
+  <data name="MsgExtractedTo" xml:space="preserve">
+    <value>Valda objekt extraherade till:</value>
+  </data>
+  <data name="MsgQSaveBeforeClosing" xml:space="preserve">
+    <value>Det finns osparade ändringar. Vill du spara dessa innan applikationen avslutas?</value>
+  </data>
+  <data name="MsgQSaveBeforeClosingBtn1" xml:space="preserve">
+    <value>Spara (skript utan GUI)</value>
+  </data>
+  <data name="MsgQSaveBeforeClosingBtn2" xml:space="preserve">
+    <value>Spara (skript med GUI)</value>
+  </data>
+  <data name="MsgQSaveBeforeClosingBtn3" xml:space="preserve">
+    <value>Avbryt</value>
+  </data>
+  <data name="MsgQSaveBeforeClosingTitle" xml:space="preserve">
+    <value>Osparade ändringar</value>
+  </data>
+  <data name="MsgSaveBeforeClosing" xml:space="preserve">
+    <value>Data har ändrats, men sparas inte. Vill du spara innan stänger applikationen?</value>
+  </data>
+  <data name="ScriptFileCreatedAt" xml:space="preserve">
+    <value>Skapades</value>
+  </data>
+  <data name="SettingsResetValueButtonContent" xml:space="preserve">
+    <value>Återställ standardvärde</value>
+  </data>
+  <data name="SuggestedPathAttributesHeader" xml:space="preserve">
+    <value>Attribut</value>
+  </data>
+  <data name="SuggestedPathHeader" xml:space="preserve">
+    <value>Sökväg</value>
+  </data>
+  <data name="TiChangelogHeader" xml:space="preserve">
+    <value>Changelog</value>
+  </data>
+  <data name="TiFunctionsHeader" xml:space="preserve">
+    <value>Funktioner</value>
+  </data>
+  <data name="TiHotstringsHeader" xml:space="preserve">
+    <value>Hotstrings</value>
+  </data>
+  <data name="TiHVariablesHeader" xml:space="preserve">
+    <value>Variabler</value>
+  </data>
+  <data name="TiSettingsHeader" xml:space="preserve">
+    <value>Inställningar</value>
+  </data>
+  <data name="TiToExtractHeader" xml:space="preserve">
+    <value>Att extrahera</value>
+  </data>
+  <data name="ValidationErrorFunctionCodeEmpty" xml:space="preserve">
+    <value>Kod får inte vara tom</value>
+  </data>
+  <data name="ValidationErrorFunctionNameAlreadyInUse" xml:space="preserve">
+    <value>Namnet används redan</value>
+  </data>
+  <data name="ValidationErrorFunctionNameContainsWhiteSpace" xml:space="preserve">
+    <value>Namnet får inte innehålla blanksteg</value>
+  </data>
+  <data name="ValidationErrorFunctionNameEmpty" xml:space="preserve">
+    <value>Namn måste anges</value>
+  </data>
+  <data name="ValidationErrorHotstringCodeEmpty" xml:space="preserve">
+    <value>Kod måste anges</value>
+  </data>
+  <data name="ValidationErrorHotstringCodeNoParenthesis" xml:space="preserve">
+    <value>Koden kommer inte kunna posta text</value>
+  </data>
+  <data name="ValidationErrorHotstringNameAlreadyInUse" xml:space="preserve">
+    <value>Namnet används redan</value>
+  </data>
+  <data name="ValidationErrorHotstringNameContainsWhiteSpace" xml:space="preserve">
+    <value>Namnet får inte innehålla blanksteg</value>
+  </data>
+  <data name="ValidationErrorHotstringNameEmpty" xml:space="preserve">
+    <value>Namn måste anges</value>
+  </data>
+  <data name="ValidationErrorHotstringSystemContainsWhiteSpace" xml:space="preserve">
+    <value>Systemnamn kan inte innehålla blanksteg</value>
+  </data>
+  <data name="ValidationErrorHotstringSystemEmpty" xml:space="preserve">
+    <value>System måste anges</value>
+  </data>
+  <data name="ValidationErrorNameAlreadyInUseAsFunction" xml:space="preserve">
+    <value>Namnet används redan som funktion</value>
+  </data>
+  <data name="ValidationErrorNameAlreadyInUseAsHotstring" xml:space="preserve">
+    <value>Namnet används redan som hotstring</value>
+  </data>
+  <data name="ValidationErrorNameAlreadyInUseAsSetting" xml:space="preserve">
+    <value>Namnet används redan för en inställning</value>
+  </data>
+  <data name="ValidationErrorNameAlreadyInUseAsVariable" xml:space="preserve">
+    <value>Namnet används redan som variabel</value>
+  </data>
+  <data name="ValidationErrorParameterNameAlreadyInUse" xml:space="preserve">
+    <value>Parameternamn används redan i funktionen</value>
+  </data>
+  <data name="ValidationErrorSettingDirectoryDoesNotExist" xml:space="preserve">
+    <value>Mapp finns inte</value>
+  </data>
+  <data name="ValidationErrorSettingNotOneOfAvailableValues" xml:space="preserve">
+    <value>är inte ett tillgängligt, giltigt värde</value>
+  </data>
+  <data name="ValidationErrorSettingValueEmpty" xml:space="preserve">
+    <value>måste ha ett angivet värde</value>
+  </data>
+  <data name="ValidationErrorVariableNameAlreadyInUse" xml:space="preserve">
+    <value>Namnet används redan</value>
+  </data>
+  <data name="ValidationErrorVariableNameContainsWhiteSpace" xml:space="preserve">
+    <value>Namnet får inte innehålla blanksteg</value>
+  </data>
+  <data name="ValidationErrorVariableNameEmpty" xml:space="preserve">
+    <value>Namn måste anges</value>
+  </data>
+  <data name="ValidationInvalidCulture" xml:space="preserve">
+    <value>Kulturen som anges i spara-filen är inte giltig. Standardvärdet 'en' (engelska) kommer att användas.</value>
+  </data>
+  <data name="ValidationInvalidCultureInfoUsed" xml:space="preserve">
+    <value>Strängen som finns i spara-filen är:</value>
+  </data>
+  <data name="ValidationNoCultureSpecified" xml:space="preserve">
+    <value>Ingen kultur har specificerats i spara-filen. Standardvärdet 'en' (engelska) kommer att användas.</value>
+  </data>
+  <data name="ValidationWarningFunctionCodeEmpty" xml:space="preserve">
+    <value>Koden bör innehålla något</value>
+  </data>
+  <data name="ValidationWarningHotstringMenuTitleEmpty" xml:space="preserve">
+    <value>Om menytitel lämnas tom kommer en standardsträng användas</value>
+  </data>
+  <data name="ValidationWarningVariableValueEmpty" xml:space="preserve">
+    <value>Värde bör var angivet</value>
+  </data>
+</root>
