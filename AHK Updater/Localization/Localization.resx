@@ -159,6 +159,18 @@
   <data name="BtnHotstringSaveContent" xml:space="preserve">
     <value>Save hotstring</value>
   </data>
+  <data name="BtnImportFileContent" xml:space="preserve">
+    <value>Select file</value>
+  </data>
+  <data name="BtnImportReadFile" xml:space="preserve">
+    <value>Read file content</value>
+  </data>
+  <data name="BtnImportSelectAll" xml:space="preserve">
+    <value>Select all</value>
+  </data>
+  <data name="BtnImportSelectNone" xml:space="preserve">
+    <value>Deselect all</value>
+  </data>
   <data name="BtnRemoveFromExtractListContent" xml:space="preserve">
     <value>Remove from extraction list</value>
   </data>
@@ -170,6 +182,9 @@
   </data>
   <data name="BtnSelectPathContent" xml:space="preserve">
     <value>Select</value>
+  </data>
+  <data name="BtnStartImport" xml:space="preserve">
+    <value>Import file</value>
   </data>
   <data name="BtnVariableSaveContent" xml:space="preserve">
     <value>Save variable</value>
@@ -188,6 +203,9 @@
   </data>
   <data name="CodeNewParameter" xml:space="preserve">
     <value>NewParameter</value>
+  </data>
+  <data name="ExpImportHeader" xml:space="preserve">
+    <value>Import old data</value>
   </data>
   <data name="ExpParametersHeader" xml:space="preserve">
     <value>Parameters</value>
@@ -225,14 +243,23 @@
   <data name="LblFunctionNameTitleContent" xml:space="preserve">
     <value>Function name</value>
   </data>
+  <data name="LblFunctionsToImportTitle" xml:space="preserve">
+    <value>Functions</value>
+  </data>
   <data name="LblHotstringMenuItemTitleContent" xml:space="preserve">
     <value>Menu title</value>
   </data>
   <data name="LblHotstringNameTitleContent" xml:space="preserve">
     <value>Hotstring name</value>
   </data>
+  <data name="LblHotstringsToImportTitle" xml:space="preserve">
+    <value>Hostrings</value>
+  </data>
   <data name="LblHotstringSystemTitleContent" xml:space="preserve">
     <value>System</value>
+  </data>
+  <data name="LblImportFileContent" xml:space="preserve">
+    <value>File to import</value>
   </data>
   <data name="LblSectionTextFunctionsTitleTitleContent" xml:space="preserve">
     <value>Title for functions-section</value>
@@ -254,6 +281,9 @@
   </data>
   <data name="LblVariableNameTitleContent" xml:space="preserve">
     <value>Variable name</value>
+  </data>
+  <data name="LblVariablesToImportTitle" xml:space="preserve">
+    <value>Variables</value>
   </data>
   <data name="LblVariableValueTitleContent" xml:space="preserve">
     <value>Value</value>
@@ -278,6 +308,18 @@
   </data>
   <data name="MsgExtractedTo" xml:space="preserve">
     <value>Selected objects extracted to:</value>
+  </data>
+  <data name="MsgImportedFunctions" xml:space="preserve">
+    <value>functions</value>
+  </data>
+  <data name="MsgImportedHotstrings" xml:space="preserve">
+    <value>hotstrings</value>
+  </data>
+  <data name="MsgImportedVariables" xml:space="preserve">
+    <value>variables</value>
+  </data>
+  <data name="MsgNumImported" xml:space="preserve">
+    <value>items were imported</value>
   </data>
   <data name="MsgQSaveBeforeClosing" xml:space="preserve">
     <value>There are unsaved changes. Do you want to save these before closing the application?</value>

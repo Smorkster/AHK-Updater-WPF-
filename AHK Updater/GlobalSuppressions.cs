@@ -12,3 +12,4 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage( "Design", "CA1030:Use events where appropriate", Justification = "<Pending>", Scope = "member", Target = "~M:AHKUpdater.Library.EventRaiser.Raise``1(System.EventHandler{AHKUpdater.Library.EventArgs{``0}},System.Object,AHKUpdater.Library.EventArgs{``0})" )]
 [assembly: SuppressMessage( "Usage", "CA2227:Collection properties should be read only", Justification = "<Pending>", Scope = "member", Target = "~P:AHKUpdater.ViewModel.HotstringViewModel.HotstringList" )]
 [assembly: SuppressMessage( "CodeQuality", "IDE0051:Remove unused private members", Justification = "<Pending>", Scope = "member", Target = "~M:AHKUpdater.ViewModel.DataViewModel.OnPropertyChanged(System.String)" )]
+[assembly: SuppressMessage( "Style", "IDE1006:Naming Styles", Justification = "<Pending>", Scope = "module" )]

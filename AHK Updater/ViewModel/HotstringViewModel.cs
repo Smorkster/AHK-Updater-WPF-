@@ -6,7 +6,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Windows;
 using System.Windows.Input;
 using System.Xml.Serialization;
 
@@ -44,7 +43,7 @@ namespace AHKUpdater.ViewModel
             }
             set
             {
-                if ( _currentlyActive != null )
+                /*if ( _currentlyActive != null )
                 {
                     if ( !Unchanged )
                     {
@@ -60,7 +59,7 @@ namespace AHKUpdater.ViewModel
                             }
                         }
                     }
-                }
+                }*/
                 _currentlyActive = value;
 
                 OnPropertyChanged( "CurrentlyActive" );
@@ -159,9 +158,18 @@ namespace AHKUpdater.ViewModel
         public void Add ( AhkHotstring item )
         {
             HotstringList.Add( item );
+            HotstringsUpdated = true;
             OnPropertyChanged( "HotstringSystemList" );
+            OnPropertyChanged( "HotstringList" );
             OnPropertyChanged( "SelectedSystem" );
             OnPropertyChanged( "SelectedHotstring" );
+        }
+
+        /// <summary> Save new hotstring </summary>
+        /// <param name="item">New hotstring to add</param>
+        public void Add ( AhkHotstringToImport item )
+        {
+            Add( new AhkHotstring( item ) );
         }
 
         /// <summary> Save new hotstring </summary>

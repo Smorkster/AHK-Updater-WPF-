@@ -1,4 +1,21 @@
-﻿<Window x:Class="AHKUpdater.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:ComponentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:Localization="clr-namespace:AHKUpdater.Localization" xmlns:Model="clr-namespace:AHKUpdater.Model" xmlns:r="clr-namespace:AHKUpdater.Properties" xmlns:System="clr-namespace:System;assembly=System.Runtime" xmlns:Validation="clr-namespace:AHKUpdater.Validations" xmlns:viewmodel="clr-namespace:AHKUpdater.ViewModel" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" d:DataContext="{d:DesignInstance Type=viewmodel:DataViewModel}" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Name="Window" ContentRendered="Window_ContentRendered">
+﻿<Window
+    x:Class="AHKUpdater.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:ComponentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:Localization="clr-namespace:AHKUpdater.Localization"
+    xmlns:Model="clr-namespace:AHKUpdater.Model"
+    xmlns:r="clr-namespace:AHKUpdater.Properties"
+    xmlns:System="clr-namespace:System;assembly=System.Runtime"
+    xmlns:Validation="clr-namespace:AHKUpdater.Validations"
+    xmlns:viewmodel="clr-namespace:AHKUpdater.ViewModel"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    d:DataContext="{d:DesignInstance Type=viewmodel:DataViewModel}"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    x:Name="Window"
+    ContentRendered="Window_ContentRendered"
+    >
     <Window.SizeToContent>WidthAndHeight</Window.SizeToContent>
     <Window.WindowStartupLocation>CenterScreen</Window.WindowStartupLocation>
     <Window.InputBindings>
@@ -97,11 +114,35 @@
             <Setter Property="ItemTemplate" Value="{StaticResource DtMessagesTemplate}" />
         </Style>
         <Style TargetType="Label" x:Key="LblBaseStyle">
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="Padding" Value="5" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
         </Style>
         <Style TargetType="ListView" x:Key="LvBaseStyle">
             <Setter Property="Margin" Value="{StaticResource StdMargin}" />
             <Setter Property="SelectionMode" Value="Single" />
+        </Style>
+        <Style TargetType="ListViewItem" x:Key="LvImportStyle">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Type}" Value="AhkFunction">
+                    <Setter Property="FontStyle" Value="Italic" />
+                    <Setter Property="FontWeight" Value="Bold" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Type}" Value="AhkHotstring">
+                    <Setter Property="FontWeight" Value="Bold" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Type}" Value="AhkVariable">
+                    <Setter Property="FontStyle" Value="Italic" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="ScrollViewer" x:Key="SvImportStyle">
+            <Setter Property="Grid.Row" Value="2" />
+            <Setter Property="Grid.RowSpan" Value="{Binding ElementName=GridImport, Path=RowDefinitions.Count}" />
+            <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="MaxHeight" Value="400" />
+            <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
         </Style>
         <Style TargetType="TextBox" x:Key="TbBaseStyle">
             <Setter Property="AcceptsReturn" Value="False" />
@@ -188,6 +229,11 @@
                                 <Setter Property="SelectedItem" Value="{Binding Path=SelectedHotstring, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
                             </Style>
                         </ListView.Style>
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <EventSetter Event="PreviewMouseLeftButtonDown" Handler="ListViewItem_PreviewMouseLeftButtonDown" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
                     </ListView>
                     <Grid x:Name="gridHotstring">
                         <Grid.Style>
@@ -251,27 +297,17 @@
                                 </Style>
                             </Label.Style>
                         </Label>
-                        <ComboBox x:Name="CbHotstringListOfSystems">
-                            <ComboBox.Text>
-                                <Binding>
-                                    <Binding.Path>System</Binding.Path>
-                                    <Binding.NotifyOnValidationError>True</Binding.NotifyOnValidationError>
-                                    <Binding.UpdateSourceTrigger>PropertyChanged</Binding.UpdateSourceTrigger>
-                                    <Binding.ValidatesOnDataErrors>True</Binding.ValidatesOnDataErrors>
-                                </Binding>
-                            </ComboBox.Text>
-                            <ComboBox.Style>
-                                <Style TargetType="ComboBox">
+                        <TextBox x:Name="TbHotstringListOfSystems">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox" BasedOn="{StaticResource TbBaseStyle}">
                                     <Setter Property="Grid.Column" Value="1" />
                                     <Setter Property="Grid.Row" Value="1" />
-                                    <Setter Property="IsEditable" Value="True" />
-                                    <Setter Property="ItemsSource" Value="{Binding Source={StaticResource CvsHotstringListOfSystems}, UpdateSourceTrigger=PropertyChanged}" />
                                     <Setter Property="Margin" Value="{StaticResource StdMargin}" />
                                     <Setter Property="Text" Value="{Binding System, UpdateSourceTrigger=PropertyChanged}" />
                                     <Setter Property="VerticalContentAlignment" Value="Center" />
                                 </Style>
-                            </ComboBox.Style>
-                        </ComboBox>
+                            </TextBox.Style>
+                        </TextBox>
                         <Label x:Name="LblHotstringMenuItemTitle">
                             <Label.Style>
                                 <Style TargetType="Label">
@@ -344,7 +380,7 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <ItemsControl x:Name="IcHotstringErrors" Style="{StaticResource IcMessages}" ItemsSource="{Binding Path=MessageQueue}"/>
+                        <ItemsControl x:Name="IcHotstringErrors" Style="{StaticResource IcMessages}" ItemsSource="{Binding Path=MessageQueue}" />
                         <Button x:Name="BtnAddHotstringForExtraction">
                             <Button.Style>
                                 <Style TargetType="Button" BasedOn="{StaticResource ExtractionButton}">
@@ -779,7 +815,7 @@
                             </DataTemplate>
                         </ListView.Resources>
                         <ListView.ItemsSource>
-                            <Binding Source="{StaticResource CvsToExtract}" UpdateSourceTrigger="PropertyChanged"/>
+                            <Binding Source="{StaticResource CvsToExtract}" UpdateSourceTrigger="PropertyChanged" />
                         </ListView.ItemsSource>
                         <ListView.Style>
                             <Style TargetType="ListView" BasedOn="{StaticResource LvBaseStyle}">
@@ -872,148 +908,95 @@
                     </CollectionViewSource>
                 </TabItem.Resources>
                 <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="200" />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition />
+                        <RowDefinition Height="1.5*" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <ListView x:Name="LvSettingsType">
-                        <ListView.Style>
-                            <Style TargetType="ListView" BasedOn="{StaticResource LvBaseStyle}">
-                                <Setter Property="Grid.RowSpan" Value="2" />
-                                <Setter Property="ItemsSource" Value="{Binding Source={StaticResource CvsSettingGroups}, UpdateSourceTrigger=PropertyChanged}" />
-                            </Style>
-                        </ListView.Style>
-                    </ListView>
-                    <ScrollViewer Grid.Column="1">
-                        <ScrollViewer.Style>
-                            <Style TargetType="ScrollViewer">
-                                <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
-                                <Setter Property="Margin" Value="{StaticResource StdMargin}" />
-                                <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
-                            </Style>
-                        </ScrollViewer.Style>
-                        <Grid>
-                            <ItemsControl x:Name="IcSettings" ItemsSource="{Binding Source={StaticResource CvsSettings}}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="0.5*" />
-                                                <ColumnDefinition />
-                                                <ColumnDefinition Width="Auto" />
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="{StaticResource RowHeight}" />
-                                            </Grid.RowDefinitions>
-                                            <Label>
-                                                <Label.Style>
-                                                    <Style TargetType="Label">
-                                                        <Setter Property="Content">
-                                                            <Setter.Value>
-                                                                <Binding>
-                                                                    <Binding.Path>DisplayName</Binding.Path>
-                                                                </Binding>
-                                                            </Setter.Value>
-                                                        </Setter>
-                                                        <Setter Property="VerticalContentAlignment" Value="Center" />
-                                                    </Style>
-                                                </Label.Style>
-                                            </Label>
-                                            <ContentControl>
-                                                <ContentControl.Style>
-                                                    <Style TargetType="ContentControl">
-                                                        <Setter Property="ContentTemplate">
-                                                            <Setter.Value>
-                                                                <DataTemplate>
-                                                                    <TextBox>
-                                                                        <TextBox.Text>
-                                                                            <Binding Path="DataContext.Value" RelativeSource="{RelativeSource AncestorType={x:Type ContentControl}}" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged" NotifyOnSourceUpdated="True">
-                                                                                <Binding.ValidationRules>
-                                                                                    <Validation:ValidateSettingValue ValidatesOnTargetUpdated="True" ValidationStep="CommittedValue" />
-                                                                                </Binding.ValidationRules>
-                                                                            </Binding>
-                                                                        </TextBox.Text>
-                                                                        <TextBox.Style>
-                                                                            <Style TargetType="TextBox" BasedOn="{StaticResource TbBaseStyle}" />
-                                                                        </TextBox.Style>
-                                                                    </TextBox>
-                                                                </DataTemplate>
-                                                            </Setter.Value>
-                                                        </Setter>
-                                                        <Setter Property="Grid.Column" Value="1" />
-                                                        <Style.Triggers>
-                                                            <DataTrigger>
-                                                                <DataTrigger.Binding>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="200" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <ListView x:Name="LvSettingsType">
+                            <ListView.Style>
+                                <Style TargetType="ListView" BasedOn="{StaticResource LvBaseStyle}">
+                                    <Setter Property="Grid.RowSpan" Value="2" />
+                                    <Setter Property="ItemsSource" Value="{Binding Source={StaticResource CvsSettingGroups}, UpdateSourceTrigger=PropertyChanged}" />
+                                </Style>
+                            </ListView.Style>
+                        </ListView>
+                        <ScrollViewer Grid.Column="1">
+                            <ScrollViewer.Style>
+                                <Style TargetType="ScrollViewer">
+                                    <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
+                                    <Setter Property="Margin" Value="{StaticResource StdMargin}" />
+                                    <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+                                </Style>
+                            </ScrollViewer.Style>
+                            <Grid>
+                                <ItemsControl x:Name="IcSettings" ItemsSource="{Binding Source={StaticResource CvsSettings}}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="0.5*" />
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="{StaticResource RowHeight}" />
+                                                </Grid.RowDefinitions>
+                                                <Label>
+                                                    <Label.Style>
+                                                        <Style TargetType="Label">
+                                                            <Setter Property="Content">
+                                                                <Setter.Value>
                                                                     <Binding>
-                                                                        <Binding.Path>SettingType</Binding.Path>
+                                                                        <Binding.Path>DisplayName</Binding.Path>
                                                                     </Binding>
-                                                                </DataTrigger.Binding>
-                                                                <DataTrigger.Value>List</DataTrigger.Value>
-                                                                <Setter Property="ContentTemplate">
-                                                                    <Setter.Value>
-                                                                        <DataTemplate>
-                                                                            <ComboBox>
-                                                                                <ComboBox.Style>
-                                                                                    <Style TargetType="ComboBox" BasedOn="{StaticResource ComboBoxBaseStyle}">
-                                                                                        <Setter Property="IsEditable" Value="True" />
-                                                                                        <Setter Property="ItemsSource">
-                                                                                            <Setter.Value>
-                                                                                                <Binding>
-                                                                                                    <Binding.Path>DataContext.AvailableValues</Binding.Path>
-                                                                                                    <Binding.RelativeSource>
-                                                                                                        <RelativeSource>
-                                                                                                            <RelativeSource.AncestorType>
-                                                                                                                <x:Type Type="ContentControl" />
-                                                                                                            </RelativeSource.AncestorType>
-                                                                                                        </RelativeSource>
-                                                                                                    </Binding.RelativeSource>
-                                                                                                </Binding>
-                                                                                            </Setter.Value>
-                                                                                        </Setter>
-                                                                                    </Style>
-                                                                                </ComboBox.Style>
-                                                                                <ComboBox.Text>
-                                                                                    <Binding>
-                                                                                        <Binding.Path>DataContext.Value</Binding.Path>
-                                                                                        <Binding.RelativeSource>
-                                                                                            <RelativeSource>
-                                                                                                <RelativeSource.AncestorType>
-                                                                                                    <x:Type Type="ContentControl" />
-                                                                                                </RelativeSource.AncestorType>
-                                                                                            </RelativeSource>
-                                                                                        </Binding.RelativeSource>
-                                                                                        <Binding.ValidationRules>
-                                                                                            <Validation:ValidateSettingValue>
-                                                                                                <Validation:ValidateSettingValue.ValidatesOnTargetUpdated>True</Validation:ValidateSettingValue.ValidatesOnTargetUpdated>
-                                                                                                <Validation:ValidateSettingValue.ValidationStep>CommittedValue</Validation:ValidateSettingValue.ValidationStep>
-                                                                                            </Validation:ValidateSettingValue>
-                                                                                        </Binding.ValidationRules>
-                                                                                    </Binding>
-                                                                                </ComboBox.Text>
-                                                                            </ComboBox>
-                                                                        </DataTemplate>
-                                                                    </Setter.Value>
-                                                                </Setter>
-                                                            </DataTrigger>
-                                                            <DataTrigger>
-                                                                <DataTrigger.Binding>
-                                                                    <Binding>
-                                                                        <Binding.Path>SettingType</Binding.Path>
-                                                                    </Binding>
-                                                                </DataTrigger.Binding>
-                                                                <DataTrigger.Value>FileInfo</DataTrigger.Value>
-                                                                <Setter Property="ContentTemplate">
-                                                                    <Setter.Value>
-                                                                        <DataTemplate>
-                                                                            <Grid>
-                                                                                <Grid.ColumnDefinitions>
-                                                                                    <ColumnDefinition />
-                                                                                    <ColumnDefinition Width="Auto" />
-                                                                                </Grid.ColumnDefinitions>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                            <Setter Property="VerticalContentAlignment" Value="Center" />
+                                                        </Style>
+                                                    </Label.Style>
+                                                </Label>
+                                                <ContentControl>
+                                                    <ContentControl.Style>
+                                                        <Style TargetType="ContentControl">
+                                                            <Setter Property="ContentTemplate">
+                                                                <Setter.Value>
+                                                                    <DataTemplate>
+                                                                        <TextBox>
+                                                                            <TextBox.Text>
+                                                                                <Binding Path="DataContext.Value" RelativeSource="{RelativeSource AncestorType={x:Type ContentControl}}" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged" NotifyOnSourceUpdated="True">
+                                                                                    <Binding.ValidationRules>
+                                                                                        <Validation:ValidateSettingValue ValidatesOnTargetUpdated="True" ValidationStep="CommittedValue" />
+                                                                                    </Binding.ValidationRules>
+                                                                                </Binding>
+                                                                            </TextBox.Text>
+                                                                            <TextBox.Style>
+                                                                                <Style TargetType="TextBox" BasedOn="{StaticResource TbBaseStyle}" />
+                                                                            </TextBox.Style>
+                                                                        </TextBox>
+                                                                    </DataTemplate>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                            <Setter Property="Grid.Column" Value="1" />
+                                                            <Style.Triggers>
+                                                                <DataTrigger>
+                                                                    <DataTrigger.Binding>
+                                                                        <Binding>
+                                                                            <Binding.Path>SettingType</Binding.Path>
+                                                                        </Binding>
+                                                                    </DataTrigger.Binding>
+                                                                    <DataTrigger.Value>List</DataTrigger.Value>
+                                                                    <Setter Property="ContentTemplate">
+                                                                        <Setter.Value>
+                                                                            <DataTemplate>
                                                                                 <ComboBox>
                                                                                     <ComboBox.Style>
                                                                                         <Style TargetType="ComboBox" BasedOn="{StaticResource ComboBoxBaseStyle}">
@@ -1035,119 +1018,395 @@
                                                                                         </Style>
                                                                                     </ComboBox.Style>
                                                                                     <ComboBox.Text>
-                                                                                        <Binding Mode="TwoWay" Path="DataContext.Value" RelativeSource="{RelativeSource AncestorType={x:Type ContentControl}}">
+                                                                                        <Binding>
+                                                                                            <Binding.Path>DataContext.Value</Binding.Path>
+                                                                                            <Binding.RelativeSource>
+                                                                                                <RelativeSource>
+                                                                                                    <RelativeSource.AncestorType>
+                                                                                                        <x:Type Type="ContentControl" />
+                                                                                                    </RelativeSource.AncestorType>
+                                                                                                </RelativeSource>
+                                                                                            </Binding.RelativeSource>
                                                                                             <Binding.ValidationRules>
-                                                                                                <Validation:ValidateSettingValue ValidatesOnTargetUpdated="True" ValidationStep="CommittedValue" />
-                                                                                                <Validation:ValidateDirectoryPath ValidatesOnTargetUpdated="True" ValidationStep="CommittedValue" />
+                                                                                                <Validation:ValidateSettingValue>
+                                                                                                    <Validation:ValidateSettingValue.ValidatesOnTargetUpdated>True</Validation:ValidateSettingValue.ValidatesOnTargetUpdated>
+                                                                                                    <Validation:ValidateSettingValue.ValidationStep>CommittedValue</Validation:ValidateSettingValue.ValidationStep>
+                                                                                                </Validation:ValidateSettingValue>
                                                                                             </Binding.ValidationRules>
                                                                                         </Binding>
                                                                                     </ComboBox.Text>
                                                                                 </ComboBox>
-                                                                                <Button>
-                                                                                    <Button.Style>
-                                                                                        <Style TargetType="Button" BasedOn="{StaticResource BtnBaseStyle}">
-                                                                                            <Setter Property="Command">
-                                                                                                <Setter.Value>
-                                                                                                    <Binding>
-                                                                                                        <Binding.ElementName>TiSettings</Binding.ElementName>
-                                                                                                        <Binding.Path>DataContext.CmdGetDirectory</Binding.Path>
-                                                                                                    </Binding>
-                                                                                                </Setter.Value>
-                                                                                            </Setter>
-                                                                                            <Setter Property="CommandParameter">
-                                                                                                <Setter.Value>
-                                                                                                    <Binding>
-                                                                                                        <Binding.RelativeSource>
-                                                                                                            <RelativeSource>
-                                                                                                                <RelativeSource.AncestorType>
-                                                                                                                    <x:Type Type="ContentControl" />
-                                                                                                                </RelativeSource.AncestorType>
-                                                                                                            </RelativeSource>
-                                                                                                        </Binding.RelativeSource>
-                                                                                                        <Binding.Path>DataContext</Binding.Path>
-                                                                                                    </Binding>
-                                                                                                </Setter.Value>
-                                                                                            </Setter>
-                                                                                            <Setter Property="Content" Value="{x:Static Localization:Localization.BtnGetSettingFolder}" />
-                                                                                            <Setter Property="Grid.Column" Value="1" />
-                                                                                        </Style>
-                                                                                    </Button.Style>
-                                                                                </Button>
-                                                                            </Grid>
-                                                                        </DataTemplate>
-                                                                    </Setter.Value>
-                                                                </Setter>
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </ContentControl.Style>
-                                            </ContentControl>
-                                            <Button>
-                                                <Button.Style>
-                                                    <Style TargetType="Button" BasedOn="{StaticResource BtnBaseStyle}">
-                                                        <Setter Property="Command">
-                                                            <Setter.Value>
-                                                                <Binding>
-                                                                    <Binding.ElementName>TiSettings</Binding.ElementName>
-                                                                    <Binding.Path>DataContext.CmdResetDefault</Binding.Path>
-                                                                </Binding>
-                                                            </Setter.Value>
-                                                        </Setter>
-                                                        <Setter Property="CommandParameter">
-                                                            <Setter.Value>
-                                                                <Binding>
-                                                                    <Binding.Path>.</Binding.Path>
-                                                                </Binding>
-                                                            </Setter.Value>
-                                                        </Setter>
-                                                        <Setter Property="Content" Value="{x:Static Localization:Localization.SettingsResetValueButtonContent}" />
-                                                        <Setter Property="Grid.Column" Value="2" />
-                                                    </Style>
-                                                </Button.Style>
-                                            </Button>
-                                        </Grid>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
+                                                                            </DataTemplate>
+                                                                        </Setter.Value>
+                                                                    </Setter>
+                                                                </DataTrigger>
+                                                                <DataTrigger>
+                                                                    <DataTrigger.Binding>
+                                                                        <Binding>
+                                                                            <Binding.Path>SettingType</Binding.Path>
+                                                                        </Binding>
+                                                                    </DataTrigger.Binding>
+                                                                    <DataTrigger.Value>FileInfo</DataTrigger.Value>
+                                                                    <Setter Property="ContentTemplate">
+                                                                        <Setter.Value>
+                                                                            <DataTemplate>
+                                                                                <Grid>
+                                                                                    <Grid.ColumnDefinitions>
+                                                                                        <ColumnDefinition />
+                                                                                        <ColumnDefinition Width="Auto" />
+                                                                                    </Grid.ColumnDefinitions>
+                                                                                    <ComboBox>
+                                                                                        <ComboBox.Style>
+                                                                                            <Style TargetType="ComboBox" BasedOn="{StaticResource ComboBoxBaseStyle}">
+                                                                                                <Setter Property="IsEditable" Value="True" />
+                                                                                                <Setter Property="ItemsSource">
+                                                                                                    <Setter.Value>
+                                                                                                        <Binding>
+                                                                                                            <Binding.Path>DataContext.AvailableValues</Binding.Path>
+                                                                                                            <Binding.RelativeSource>
+                                                                                                                <RelativeSource>
+                                                                                                                    <RelativeSource.AncestorType>
+                                                                                                                        <x:Type Type="ContentControl" />
+                                                                                                                    </RelativeSource.AncestorType>
+                                                                                                                </RelativeSource>
+                                                                                                            </Binding.RelativeSource>
+                                                                                                        </Binding>
+                                                                                                    </Setter.Value>
+                                                                                                </Setter>
+                                                                                            </Style>
+                                                                                        </ComboBox.Style>
+                                                                                        <ComboBox.Text>
+                                                                                            <Binding Mode="TwoWay" Path="DataContext.Value" RelativeSource="{RelativeSource AncestorType={x:Type ContentControl}}">
+                                                                                                <Binding.ValidationRules>
+                                                                                                    <Validation:ValidateSettingValue ValidatesOnTargetUpdated="True" ValidationStep="CommittedValue" />
+                                                                                                    <Validation:ValidateDirectoryPath ValidatesOnTargetUpdated="True" ValidationStep="CommittedValue" />
+                                                                                                </Binding.ValidationRules>
+                                                                                            </Binding>
+                                                                                        </ComboBox.Text>
+                                                                                    </ComboBox>
+                                                                                    <Button>
+                                                                                        <Button.Style>
+                                                                                            <Style TargetType="Button" BasedOn="{StaticResource BtnBaseStyle}">
+                                                                                                <Setter Property="Command">
+                                                                                                    <Setter.Value>
+                                                                                                        <Binding>
+                                                                                                            <Binding.ElementName>TiSettings</Binding.ElementName>
+                                                                                                            <Binding.Path>DataContext.CmdGetDirectory</Binding.Path>
+                                                                                                        </Binding>
+                                                                                                    </Setter.Value>
+                                                                                                </Setter>
+                                                                                                <Setter Property="CommandParameter">
+                                                                                                    <Setter.Value>
+                                                                                                        <Binding>
+                                                                                                            <Binding.RelativeSource>
+                                                                                                                <RelativeSource>
+                                                                                                                    <RelativeSource.AncestorType>
+                                                                                                                        <x:Type Type="ContentControl" />
+                                                                                                                    </RelativeSource.AncestorType>
+                                                                                                                </RelativeSource>
+                                                                                                            </Binding.RelativeSource>
+                                                                                                            <Binding.Path>DataContext</Binding.Path>
+                                                                                                        </Binding>
+                                                                                                    </Setter.Value>
+                                                                                                </Setter>
+                                                                                                <Setter Property="Content" Value="{x:Static Localization:Localization.BtnGetSettingFolder}" />
+                                                                                                <Setter Property="Grid.Column" Value="1" />
+                                                                                            </Style>
+                                                                                        </Button.Style>
+                                                                                    </Button>
+                                                                                </Grid>
+                                                                            </DataTemplate>
+                                                                        </Setter.Value>
+                                                                    </Setter>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </ContentControl.Style>
+                                                </ContentControl>
+                                                <Button>
+                                                    <Button.Style>
+                                                        <Style TargetType="Button" BasedOn="{StaticResource BtnBaseStyle}">
+                                                            <Setter Property="Command">
+                                                                <Setter.Value>
+                                                                    <Binding>
+                                                                        <Binding.ElementName>TiSettings</Binding.ElementName>
+                                                                        <Binding.Path>DataContext.CmdResetDefault</Binding.Path>
+                                                                    </Binding>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                            <Setter Property="CommandParameter">
+                                                                <Setter.Value>
+                                                                    <Binding>
+                                                                        <Binding.Path>.</Binding.Path>
+                                                                    </Binding>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                            <Setter Property="Content" Value="{x:Static Localization:Localization.SettingsResetValueButtonContent}" />
+                                                            <Setter Property="Grid.Column" Value="2" />
+                                                        </Style>
+                                                    </Button.Style>
+                                                </Button>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Grid>
+                        </ScrollViewer>
+                        <Grid Grid.Column="1" Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <ItemsControl x:Name="IcSettingsErrors">
+                                <ItemsControl.Style>
+                                    <Style TargetType="ItemsControl" BasedOn="{StaticResource IcMessages}">
+                                        <Setter Property="ItemsSource" Value="{Binding Path=MessageQueue}" />
+                                    </Style>
+                                </ItemsControl.Style>
                             </ItemsControl>
+                            <Button x:Name="BtnSaveSettings">
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource BtnBaseStyle}">
+                                        <Setter Property="Command">
+                                            <Setter.Value>
+                                                <Binding>
+                                                    <Binding.ElementName>TiSettings</Binding.ElementName>
+                                                    <Binding.Path>DataContext.CmdSaveSettings</Binding.Path>
+                                                </Binding>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Setter Property="CommandParameter">
+                                            <Setter.Value>
+                                                <Binding>
+                                                    <Binding.ElementName>IcSettings</Binding.ElementName>
+                                                </Binding>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Setter Property="Content" Value="{x:Static Localization:Localization.BtnSaveSettingsContent}" />
+                                        <Setter Property="Grid.Column" Value="1" />
+                                        <Setter Property="HorizontalAlignment" Value="Right" />
+                                    </Style>
+                                </Button.Style>
+                            </Button>
                         </Grid>
-                    </ScrollViewer>
-                    <Grid Grid.Column="1" Grid.Row="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <ItemsControl x:Name="IcSettingsErrors">
-                            <ItemsControl.Style>
-                                <Style TargetType="ItemsControl" BasedOn="{StaticResource IcMessages}">
-                                    <Setter Property="ItemsSource" Value="{Binding Path=MessageQueue}" />
-                                </Style>
-                            </ItemsControl.Style>
-                        </ItemsControl>
-                        <Button x:Name="BtnSaveSettings">
-                            <Button.Style>
-                                <Style TargetType="Button" BasedOn="{StaticResource BtnBaseStyle}">
-                                    <Setter Property="Command">
-                                        <Setter.Value>
-                                            <Binding>
-                                                <Binding.ElementName>TiSettings</Binding.ElementName>
-                                                <Binding.Path>DataContext.CmdSaveSettings</Binding.Path>
-                                            </Binding>
-                                        </Setter.Value>
-                                    </Setter>
-                                    <Setter Property="CommandParameter">
-                                        <Setter.Value>
-                                            <Binding>
-                                                <Binding.ElementName>IcSettings</Binding.ElementName>
-                                            </Binding>
-                                        </Setter.Value>
-                                    </Setter>
-                                    <Setter Property="Content" Value="{x:Static Localization:Localization.BtnSaveSettingsContent}" />
-                                    <Setter Property="Grid.Column" Value="1" />
-                                    <Setter Property="HorizontalAlignment" Value="Right" />
-                                </Style>
-                            </Button.Style>
-                        </Button>
                     </Grid>
+                    <Expander x:Name="ExpImport">
+                        <Expander.Resources>
+                            <CollectionViewSource x:Key="CvsImportFunctions" Source="{Binding FunctionsReadFromFile, UpdateSourceTrigger=PropertyChanged}" IsLiveSortingRequested="True">
+                                <CollectionViewSource.SortDescriptions>
+                                    <ComponentModel:SortDescription PropertyName="Name" Direction="Ascending" />
+                                </CollectionViewSource.SortDescriptions>
+                            </CollectionViewSource>
+                            <CollectionViewSource x:Key="CvsImportHotstrings" Source="{Binding HotstringsReadFromFile, UpdateSourceTrigger=PropertyChanged}" IsLiveSortingRequested="True">
+                                <CollectionViewSource.SortDescriptions>
+                                    <ComponentModel:SortDescription PropertyName="Name" Direction="Ascending" />
+                                </CollectionViewSource.SortDescriptions>
+                            </CollectionViewSource>
+                            <CollectionViewSource x:Key="CvsImportVariables" Source="{Binding VariablesReadFromFile, UpdateSourceTrigger=PropertyChanged}" IsLiveSortingRequested="True">
+                                <CollectionViewSource.SortDescriptions>
+                                    <ComponentModel:SortDescription PropertyName="Name" Direction="Ascending" />
+                                </CollectionViewSource.SortDescriptions>
+                            </CollectionViewSource>
+                        </Expander.Resources>
+                        <Expander.Style>
+                            <Style TargetType="Expander">
+                                <Setter Property="Grid.Row" Value="1" />
+                                <Setter Property="Header" Value="{x:Static Localization:Localization.ExpImportHeader}" />
+                                <Setter Property="IsExpanded" Value="False" />
+                                <Setter Property="MaxHeight" Value="400" />
+                            </Style>
+                        </Expander.Style>
+                        <Grid x:Name="GridImport">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Label>
+                                <Label.Style>
+                                    <Style TargetType="Label" BasedOn="{StaticResource LblBaseStyle}">
+                                        <Setter Property="Content" Value="{x:Static Localization:Localization.LblImportFileContent}" />
+                                    </Style>
+                                </Label.Style>
+                            </Label>
+                            <TextBox>
+                                <TextBox.Style>
+                                    <Style TargetType="TextBox" BasedOn="{StaticResource TbBaseStyle}">
+                                        <Setter Property="Grid.Column" Value="1" />
+                                        <Setter Property="Grid.ColumnSpan" Value="3" />
+                                        <Setter Property="Text" Value="{Binding FileToImportPath}" />
+                                    </Style>
+                                </TextBox.Style>
+                            </TextBox>
+                            <Label>
+                                <Label.Style>
+                                    <Style TargetType="Label" BasedOn="{StaticResource LblBaseStyle}">
+                                        <Setter Property="Content" Value="{x:Static Localization:Localization.LblHotstringsToImportTitle}" />
+                                        <Setter Property="Grid.Column" Value="1" />
+                                        <Setter Property="Grid.Row" Value="1" />
+                                    </Style>
+                                </Label.Style>
+                            </Label>
+                            <ScrollViewer>
+                                <ScrollViewer.Style>
+                                    <Style TargetType="ScrollViewer" BasedOn="{StaticResource SvImportStyle}">
+                                        <Setter Property="Grid.Column" Value="1" />
+                                    </Style>
+                                </ScrollViewer.Style>
+                                <ItemsControl x:Name="IcHotstringsToImport">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Vertical" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <CheckBox IsChecked="{Binding ImportThis, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource CheckBoxBaseStyle}" />
+                                                <TextBlock Text="{Binding Name}" Margin="10,5" ToolTip="{Binding Value}" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                    <ItemsControl.Style>
+                                        <Style TargetType="ItemsControl">
+                                            <Setter Property="ItemsSource" Value="{Binding Source={StaticResource CvsImportHotstrings},UpdateSourceTrigger=PropertyChanged}" />
+                                            <Setter Property="Margin" Value="0" />
+                                        </Style>
+                                    </ItemsControl.Style>
+                                </ItemsControl>
+                            </ScrollViewer>
+                            <Label>
+                                <Label.Style>
+                                    <Style TargetType="Label" BasedOn="{StaticResource LblBaseStyle}">
+                                        <Setter Property="Content" Value="{x:Static Localization:Localization.LblVariablesToImportTitle}" />
+                                        <Setter Property="Grid.Column" Value="2" />
+                                        <Setter Property="Grid.Row" Value="1" />
+                                    </Style>
+                                </Label.Style>
+                            </Label>
+                            <ScrollViewer>
+                                <ScrollViewer.Style>
+                                    <Style TargetType="ScrollViewer" BasedOn="{StaticResource SvImportStyle}">
+                                        <Setter Property="Grid.Column" Value="2" />
+                                    </Style>
+                                </ScrollViewer.Style>
+                                <ItemsControl x:Name="IcVariablesToImport">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Vertical" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <CheckBox IsChecked="{Binding ImportThis, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource CheckBoxBaseStyle}" />
+                                                <TextBlock Text="{Binding Name}" Margin="10,5" ToolTip="{Binding Value}" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                    <ItemsControl.Style>
+                                        <Style TargetType="ItemsControl">
+                                            <Setter Property="ItemsSource" Value="{Binding Source={StaticResource CvsImportVariables},UpdateSourceTrigger=PropertyChanged}" />
+                                            <Setter Property="Margin" Value="0" />
+                                        </Style>
+                                    </ItemsControl.Style>
+                                </ItemsControl>
+                            </ScrollViewer>
+                            <Label>
+                                <Label.Style>
+                                    <Style TargetType="Label" BasedOn="{StaticResource LblBaseStyle}">
+                                        <Setter Property="Content" Value="{x:Static Localization:Localization.LblFunctionsToImportTitle}" />
+                                        <Setter Property="Grid.Column" Value="3" />
+                                        <Setter Property="Grid.Row" Value="1" />
+                                    </Style>
+                                </Label.Style>
+                            </Label>
+                            <ScrollViewer>
+                                <ScrollViewer.Style>
+                                    <Style TargetType="ScrollViewer" BasedOn="{StaticResource SvImportStyle}">
+                                        <Setter Property="Grid.Column" Value="3" />
+                                    </Style>
+                                </ScrollViewer.Style>
+                                <ItemsControl x:Name="IcFunctionsToImport">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Vertical" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <CheckBox IsChecked="{Binding ImportThis, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource CheckBoxBaseStyle}" />
+                                                <TextBlock Text="{Binding Name}" Margin="10,5" ToolTip="{Binding Value}" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                    <ItemsControl.Style>
+                                        <Style TargetType="ItemsControl">
+                                            <Setter Property="ItemsSource" Value="{Binding Source={StaticResource CvsImportFunctions},UpdateSourceTrigger=PropertyChanged}" />
+                                            <Setter Property="Margin" Value="0" />
+                                        </Style>
+                                    </ItemsControl.Style>
+                                </ItemsControl>
+                            </ScrollViewer>
+                            <Button>
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource BtnBaseStyle}">
+                                        <Setter Property="Command" Value="{Binding CmdSelectFileToImport}" />
+                                        <Setter Property="Content" Value="{x:Static Localization:Localization.BtnImportFileContent}" />
+                                        <Setter Property="Grid.Row" Value="1" />
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                            <Button>
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource BtnBaseStyle}">
+                                        <Setter Property="Command" Value="{Binding ElementName=Window, Path=DataContext.CmdReadFileForImport}" />
+                                        <Setter Property="CommandParameter" Value="{Binding ElementName=IcObjectsToImport, Path=ItemsSource}" />
+                                        <Setter Property="Content" Value="{x:Static Localization:Localization.BtnImportReadFile}" />
+                                        <Setter Property="Grid.Row" Value="2" />
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                            <Button>
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource BtnBaseStyle}">
+                                        <Setter Property="Command" Value="{Binding ElementName=Window, Path=DataContext.CmdSelectAll}" />
+                                        <Setter Property="Content" Value="{x:Static Localization:Localization.BtnImportSelectAll}" />
+                                        <Setter Property="Grid.Row" Value="3" />
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                            <Button>
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource BtnBaseStyle}">
+                                        <Setter Property="Command" Value="{Binding ElementName=Window, Path=DataContext.CmdSelectNone}" />
+                                        <Setter Property="Content" Value="{x:Static Localization:Localization.BtnImportSelectNone}" />
+                                        <Setter Property="Grid.Row" Value="4" />
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                            <Button>
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource BtnBaseStyle}">
+                                        <Setter Property="Command" Value="{Binding ElementName=Window, Path=DataContext.CmdStartImport}" />
+                                        <Setter Property="Content" Value="{x:Static Localization:Localization.BtnStartImport}" />
+                                        <Setter Property="Grid.Row" Value="5" />
+                                        <Setter Property="VerticalAlignment" Value="Top" />
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                        </Grid>
+                    </Expander>
                 </Grid>
             </TabItem>
         </TabControl>

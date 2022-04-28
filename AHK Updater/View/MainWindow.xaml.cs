@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Markup;
 
 namespace AHKUpdater
 {
@@ -37,6 +38,7 @@ namespace AHKUpdater
             }
 
             Localization.Localization.Culture = CultureInfo.GetCultureInfo( cultureToUse );
+            Language = XmlLanguage.GetLanguage( cultureToUse );
             InitializeComponent();
             Title = $"Version { FileVersionInfo.GetVersionInfo( Assembly.GetExecutingAssembly().Location ).ProductVersion }";
         }
@@ -65,9 +67,11 @@ namespace AHKUpdater
 
         private void LvHotstrings_SelectionChanged ( object sender, SelectionChangedEventArgs e )
         {
-            AhkHotstring h = ( (HotstringViewModel) TiHotstrings.DataContext ).HotstringList.First( x => x.Id.Equals( ( (AhkHotstring) LvHotstrings.SelectedItem ).Id ) ).CopyThis();
-            ( (HotstringViewModel) TiHotstrings.DataContext ).CurrentlyActive = h;
-
+            /*if ( LvHotstrings.SelectedItem != null )
+            {
+                AhkHotstring h = ( (HotstringViewModel) TiHotstrings.DataContext ).HotstringList.First( x => x.Id.Equals( ( (AhkHotstring) LvHotstrings.SelectedItem ).Id ) ).CopyThis();
+                ( (HotstringViewModel) TiHotstrings.DataContext ).CurrentlyActive = h;
+            }*/
         }
 
         private void LvSettingsType_SelectionChanged ( object sender, SelectionChangedEventArgs e )
@@ -99,9 +103,11 @@ namespace AHKUpdater
 
             hotstringCV.Filter = HotstringViewSource_Filter;
             settingsCV.Filter = SettingsViewSource_Filter;
+
             CbHotstringSystems.SelectedIndex = -1;
             LvFunctions.SelectedIndex = -1;
             LvVariables.SelectedIndex = -1;
+
             LvHotstrings.SelectionChanged += LvHotstrings_SelectionChanged;
             LvFunctions.SelectionChanged += LvFunctions_SelectionChanged;
             LvVariables.SelectionChanged += LvVariables_SelectionChanged;
@@ -116,6 +122,12 @@ namespace AHKUpdater
             }
             Closing += ( (DataViewModel) DataContext ).MainWindow_Closing;
             Activate();
+        }
+
+        private void ListViewItem_PreviewMouseLeftButtonDown ( object sender, System.Windows.Input.MouseButtonEventArgs e )
+        {
+            AhkHotstring h = ( (AhkHotstring) ( (ListViewItem) sender ).DataContext ).CopyThis();
+            ( (HotstringViewModel) TiHotstrings.DataContext ).CurrentlyActive = h;
         }
     }
 }

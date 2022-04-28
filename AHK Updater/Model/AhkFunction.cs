@@ -36,6 +36,23 @@ namespace AHKUpdater.Model
             Parameter.OnItemChanged += OnParameterChanged;
         }
 
+        public AhkFunction ( AhkFunctionToImport OldFunction )
+        {
+            Contract.Requires( OldFunction != null );
+            Name = OldFunction.Name;
+            Value = OldFunction.Value;
+            _id = OldFunction.Id;
+            IsNew = false;
+            UpForExtraction = OldFunction.UpForExtraction;
+
+            ParameterList = new ObservableCollection<Parameter>();
+            foreach ( Parameter p in OldFunction.ParameterList )
+            {
+                ParameterList.Add( new Parameter( p ) );
+            }
+            Parameter.OnItemChanged += OnParameterChanged;
+        }
+
         public AhkFunction ( bool v )
         {
             IsNew = v;
@@ -193,6 +210,6 @@ namespace AHKUpdater.Model
 
         private void OnParameterChanged ( Parameter obj ) => OnPropertyChanged( "FunctionHeader" );
 
-        private void OnPropertyChanged ( string PropertyName ) => PropertyChanged?.Invoke( this, new PropertyChangedEventArgs( PropertyName ) );
+        internal void OnPropertyChanged ( string PropertyName ) => PropertyChanged?.Invoke( this, new PropertyChangedEventArgs( PropertyName ) );
     }
 }

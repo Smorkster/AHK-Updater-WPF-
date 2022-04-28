@@ -2,6 +2,7 @@
 using AHKUpdater.Library.Enums;
 using AHKUpdater.Model;
 using AHKUpdater.View;
+using Microsoft.Win32;
 using System;
 using System.Collections;
 using System.Collections.ObjectModel;
@@ -25,6 +26,11 @@ namespace AHKUpdater.ViewModel
         private ICommand _cmdSaveSettings;
         private ObservableCollection<Message> _messageQueue = new ObservableCollection<Message>();
         private ObservableCollection<Setting> _settingList;
+        private RelayCommand _cmdSelectFileToImport;
+        private string _fileToImportPath = @"C:\Users\6g1w\AHK - Standardsvar.xml";
+        private readonly ObservableCollection<AhkFunctionToImport> _functionsReadFromFile = new ObservableCollection<AhkFunctionToImport>();
+        private readonly ObservableCollection<AhkHotstringToImport> _hotstringsReadFromFile = new ObservableCollection<AhkHotstringToImport>();
+        private readonly ObservableCollection<AhkVariableToImport> _variablesReadFromFile = new ObservableCollection<AhkVariableToImport>();
 
         public SettingViewModel ()
         {
@@ -44,9 +50,44 @@ namespace AHKUpdater.ViewModel
         }
 
         public ICommand CmdGetDirectory => _cmdGetDirectory ??= new RelayCommand<Setting>( GetDirectory );
+        public ICommand CmdSelectFileToImport => _cmdSelectFileToImport ??= new RelayCommand( SelectFileToImport );
+
         public ICommand CmdRemove => throw new NotImplementedException();
         public ICommand CmdResetDefault => _cmdResetDefault ??= new RelayCommand<Setting>( ResetDefault, VerifyChanged );
         public ICommand CmdSaveSettings => _cmdSaveSettings ??= new RelayCommand<ItemsControl>( SaveSettings, VerifyValid );
+
+        private void SelectFileToImport ( object obj )
+        {
+            OpenFileDialog fileSelected = new OpenFileDialog
+            {
+                DefaultExt = ".xml",
+                Filter = "XML files|*.xml"
+            };
+
+            if ( FileToImportPath == null )
+            {
+                fileSelected.InitialDirectory = Environment.GetEnvironmentVariable( "USERPROFILE" );
+            }
+            else
+            {
+                try { fileSelected.InitialDirectory = new FileInfo( FileToImportPath ).Directory.FullName; }
+                catch
+                {
+                    try
+                    {
+                        fileSelected.InitialDirectory = new DirectoryInfo( FileToImportPath ).FullName;
+                    }
+                    catch { fileSelected.InitialDirectory = Environment.GetEnvironmentVariable( "USERPROFILE" ); }
+                }
+            }
+            fileSelected.Multiselect = false;
+            fileSelected.CheckFileExists = true;
+
+            if ( fileSelected.ShowDialog() == true )
+            {
+                FileToImportPath = fileSelected.FileName;
+            }
+        }
 
         /// <summary> Property for a list of errors </summary>
         [XmlIgnore]
@@ -113,6 +154,43 @@ namespace AHKUpdater.ViewModel
         /// <summary> Unused </summary>
         [XmlIgnore]
         public bool Unchanged => throw new NotImplementedException();
+
+        public string FileToImportPath
+        {
+            get => _fileToImportPath;
+            set
+            {
+                _fileToImportPath = value;
+                OnPropertyChanged( "FileToImportPath" );
+            }
+        }
+
+        [XmlIgnore]
+        public ObservableCollection<AhkFunctionToImport> FunctionsReadFromFile
+        {
+            get
+            {
+                return _functionsReadFromFile;
+            }
+        }
+
+        [XmlIgnore]
+        public ObservableCollection<AhkHotstringToImport> HotstringsReadFromFile
+        {
+            get
+            {
+                return _hotstringsReadFromFile;
+            }
+        }
+
+        [XmlIgnore]
+        public ObservableCollection<AhkVariableToImport> VariablesReadFromFile
+        {
+            get
+            {
+                return _variablesReadFromFile;
+            }
+        }
 
         /// <summary> Add setting </summary>
         /// <param name="setting">Setting to be added</param>

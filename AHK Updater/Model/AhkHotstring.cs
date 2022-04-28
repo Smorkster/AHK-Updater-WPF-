@@ -13,6 +13,7 @@ namespace AHKUpdater.Model
         private string _name = "";
         private string _system = "";
         private bool _upForExtraction = false;
+
         private string _value = "";
         private bool _hsTypeIsAdvanced = false;
 
@@ -23,6 +24,21 @@ namespace AHKUpdater.Model
         /// <summary> Create a AHKCommand object from a AHKCommand </summary>
         /// <param name="OldHotstring">Existing hotstring to be copied</param>
         public AhkHotstring ( AhkHotstring OldHotstring )
+        {
+            Contract.Requires( OldHotstring != null );
+            Name = OldHotstring.Name;
+            Value = OldHotstring.Value;
+            System = OldHotstring.System;
+            MenuTitle = OldHotstring.MenuTitle;
+            HsTypeIsAdvanced = OldHotstring.HsTypeIsAdvanced;
+            UpForExtraction = OldHotstring.UpForExtraction;
+            _id = OldHotstring.Id;
+            IsNew = false;
+        }
+
+        /// <summary> Create a AHKCommand object from a AHKCommand </summary>
+        /// <param name="OldHotstring">Existing hotstring to be copied</param>
+        public AhkHotstring ( AhkHotstringToImport OldHotstring )
         {
             Contract.Requires( OldHotstring != null );
             Name = OldHotstring.Name;
@@ -153,7 +169,7 @@ namespace AHKUpdater.Model
             OnPropertyChanged( "HsLvlType" );
         }
 
-        private void OnPropertyChanged ( string PropertyName )
+        internal void OnPropertyChanged ( string PropertyName )
         {
             PropertyChanged?.Invoke( this, new PropertyChangedEventArgs( PropertyName ) );
         }

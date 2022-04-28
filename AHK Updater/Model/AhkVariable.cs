@@ -26,6 +26,15 @@ namespace AHKUpdater.Model
             _id = OldVariable.Id;
         }
 
+        public AhkVariable ( AhkVariableToImport OldVariable )
+        {
+            Contract.Requires( OldVariable != null );
+            Name = OldVariable.Name;
+            Value = OldVariable.Value;
+            UpForExtraction = OldVariable.UpForExtraction;
+            _id = OldVariable.Id;
+        }
+
         /// <summary> Create Variable object </summary>
         /// <param name="Name">Name of variable</param>
         /// <param name="Value">Value of variable</param>
@@ -79,6 +88,6 @@ namespace AHKUpdater.Model
             OnPropertyChanged( "Name" );
         }
 
-        private void OnPropertyChanged ( string PropertyName ) { PropertyChanged?.Invoke( this, new PropertyChangedEventArgs( PropertyName ) ); }
+        internal void OnPropertyChanged ( string PropertyName ) { PropertyChanged?.Invoke( this, new PropertyChangedEventArgs( PropertyName ) ); }
     }
 }

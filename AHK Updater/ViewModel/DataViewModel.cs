@@ -2,6 +2,7 @@
 using AHKUpdater.Model;
 using AHKUpdater.View;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -20,10 +21,14 @@ namespace AHKUpdater.ViewModel
         private ICommand _cmdNewFunction;
         private ICommand _cmdNewHotstring;
         private ICommand _cmdNewVariable;
+        private RelayCommand _cmdReadFileForImport;
         private ICommand _cmdSaveCurrentlyActiveFunction;
         private ICommand _cmdSaveCurrentlyActiveHotstring;
         private ICommand _cmdSaveCurrentlyActiveVariable;
         private ICommand _cmdSaveToFile;
+        private ICommand _cmdSelectAll;
+        private ICommand _cmdSelectNone;
+        private RelayCommand _cmdStartImport;
 
         public DataViewModel ()
         {
@@ -31,36 +36,6 @@ namespace AHKUpdater.ViewModel
             VariableVM = new VariableViewModel();
             FunctionVM = new FunctionViewModel();
             SettingVM = new SettingViewModel();
-        }
-
-        public void InitiateFull ()
-        {
-            EditorVM = new EditorViewModel();
-            ExtractionVM = new ExtractionViewModel();
-            ExtractionVM.InsertSettingsForExtraction( SettingVM );
-            ExtractionViewModel.action += RemovedFromExtraction;
-        }
-
-        private void RemovedFromExtraction ( object obj )
-        {
-            if ( obj.GetType() == typeof( AhkFunction ) )
-            {
-                FunctionVM.FunctionList.Single( x => x.Id.Equals( ( (AhkFunction) obj ).Id ) ).UpForExtraction = false;
-                if ( FunctionVM.CurrentlyActive.Id.Equals( ( (AhkFunction) obj ).Id ) )
-                { FunctionVM.CurrentlyActive.UpForExtraction = false; }
-            }
-            else if ( obj.GetType() == typeof( AhkHotstring ) )
-            {
-                HotstringVM.HotstringList.Single( x => x.Id.Equals( ( (AhkHotstring) obj ).Id ) ).UpForExtraction = false;
-                if ( HotstringVM.CurrentlyActive.Id.Equals( ( (AhkHotstring) obj ).Id ) )
-                { HotstringVM.CurrentlyActive.UpForExtraction = false; }
-            }
-            else if ( obj.GetType() == typeof( AhkVariable ) )
-            {
-                VariableVM.VariableList.Single( x => x.Id.Equals( ( (AhkVariable) obj ).Id ) ).UpForExtraction = false;
-                if ( VariableVM.CurrentlyActive.Id.Equals( ( (AhkVariable) obj ).Id ) )
-                { VariableVM.CurrentlyActive.UpForExtraction = false; }
-            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -79,6 +54,8 @@ namespace AHKUpdater.ViewModel
 
         public ICommand CmdNewVariable => _cmdNewVariable ??= new RelayCommand( x => { NewVariable(); } );
 
+        public ICommand CmdReadFileForImport => _cmdReadFileForImport ??= new RelayCommand( ReadFile, VerifyValidFileForImport );
+
         public ICommand CmdSaveCurrentFunction => _cmdSaveCurrentlyActiveFunction ??= new RelayCommand( x => { SaveCurrentFunction(); }, _ => VerifyValidFunction() );
 
         public ICommand CmdSaveCurrentHotstring => _cmdSaveCurrentlyActiveHotstring ??= new RelayCommand( x => { SaveCurrentHotstring(); }, _ => VerifyValidHotstring() );
@@ -86,6 +63,12 @@ namespace AHKUpdater.ViewModel
         public ICommand CmdSaveCurrentVariable => _cmdSaveCurrentlyActiveVariable ??= new RelayCommand( x => { SaveCurrentVariable(); }, _ => VerifyValidVariable() );
 
         public ICommand CmdSaveToFile => _cmdSaveToFile ??= new RelayCommand( x => { SaveToFile(); }, p => CheckAnythingUpdated() );
+
+        public ICommand CmdSelectAll => _cmdSelectAll ??= new RelayCommand( SelectAllForImport, VerifyFileRead );
+
+        public ICommand CmdSelectNone => _cmdSelectNone ??= new RelayCommand( SelectNoneForImport, VerifyFileRead );
+
+        public ICommand CmdStartImport => _cmdStartImport ??= new RelayCommand( StartImport, VerifyAnyObjectsForImport );
 
         [XmlIgnore]
         public EditorViewModel EditorVM
@@ -124,6 +107,14 @@ namespace AHKUpdater.ViewModel
         public string XmlFile
         {
             get; internal set;
+        }
+
+        public void InitiateFull ()
+        {
+            EditorVM = new EditorViewModel();
+            ExtractionVM = new ExtractionViewModel();
+            ExtractionVM.InsertSettingsForExtraction( SettingVM );
+            ExtractionViewModel.action += RemovedFromExtraction;
         }
 
         public void MainWindow_Closing ( object sender, CancelEventArgs e )
@@ -221,6 +212,68 @@ namespace AHKUpdater.ViewModel
             PropertyChanged?.Invoke( this, new PropertyChangedEventArgs( PropertyName ) );
         }
 
+        private void ReadFile ( object obj )
+        {
+            ahk t = (ahk) FileHandler.ImportFile( SettingVM.FileToImportPath );
+            foreach ( ahkFunction f in t.functions )
+            {
+                AhkFunctionToImport newfunction = new AhkFunctionToImport
+                {
+                    Name = f.functionName,
+                    Value = f.Value.Split( ")" )[ 1 ]
+                };
+
+                foreach ( string p in f.Value.Split( ")" )[ 0 ].Split( "(" )[ 1 ].Split( "," ) )
+                {
+                    newfunction.AddParameter( p );
+                }
+
+                SettingVM.FunctionsReadFromFile.Add( newfunction );
+            }
+            foreach ( ahkHotstring h in t.hotstrings )
+            {
+                AhkHotstringToImport newHotstring = new AhkHotstringToImport
+                {
+                    Name = h.hotstringName,
+                    Value = h.Value,
+                    System = h.hotstringSystem,
+                    MenuTitle = h.hotstringMenuTitle
+                };
+                SettingVM.HotstringsReadFromFile.Add( newHotstring );
+            }
+            foreach ( ahkVariable v in t.variables )
+            {
+                AhkVariableToImport newVariable = new AhkVariableToImport
+                {
+                    Name = v.variableName,
+                    Value = v.Value
+                };
+                SettingVM.VariablesReadFromFile.Add( newVariable );
+            }
+        }
+
+        private void RemovedFromExtraction ( object obj )
+        {
+            if ( obj.GetType() == typeof( AhkFunction ) )
+            {
+                FunctionVM.FunctionList.Single( x => x.Id.Equals( ( (AhkFunction) obj ).Id ) ).UpForExtraction = false;
+                if ( FunctionVM.CurrentlyActive.Id.Equals( ( (AhkFunction) obj ).Id ) )
+                { FunctionVM.CurrentlyActive.UpForExtraction = false; }
+            }
+            else if ( obj.GetType() == typeof( AhkHotstring ) )
+            {
+                HotstringVM.HotstringList.Single( x => x.Id.Equals( ( (AhkHotstring) obj ).Id ) ).UpForExtraction = false;
+                if ( HotstringVM.CurrentlyActive.Id.Equals( ( (AhkHotstring) obj ).Id ) )
+                { HotstringVM.CurrentlyActive.UpForExtraction = false; }
+            }
+            else if ( obj.GetType() == typeof( AhkVariable ) )
+            {
+                VariableVM.VariableList.Single( x => x.Id.Equals( ( (AhkVariable) obj ).Id ) ).UpForExtraction = false;
+                if ( VariableVM.CurrentlyActive.Id.Equals( ( (AhkVariable) obj ).Id ) )
+                { VariableVM.CurrentlyActive.UpForExtraction = false; }
+            }
+        }
+
         private void SaveCurrentFunction ()
         {
             FunctionVM.SaveCurrentlyActive();
@@ -243,6 +296,65 @@ namespace AHKUpdater.ViewModel
             FileHandler.WriteScript( this );
 
             FunctionVM.FunctionsUpdated = HotstringVM.HotstringsUpdated = VariableVM.VariablesUpdated = SettingVM.SettingsUpdated = false;
+        }
+
+        private void SelectAllForImport ( object obj )
+        {
+            SettingVM.FunctionsReadFromFile.ToList().ForEach( x => x.ImportThis = true );
+            SettingVM.HotstringsReadFromFile.ToList().ForEach( x => x.ImportThis = true );
+            SettingVM.VariablesReadFromFile.ToList().ForEach( x => x.ImportThis = true );
+            OnPropertyChanged( "ImportThis" );
+        }
+
+        private void SelectNoneForImport ( object obj )
+        {
+            SettingVM.FunctionsReadFromFile.ToList().ForEach( x => x.ImportThis = false );
+            SettingVM.HotstringsReadFromFile.ToList().ForEach( x => x.ImportThis = false );
+            SettingVM.VariablesReadFromFile.ToList().ForEach( x => x.ImportThis = false );
+            OnPropertyChanged( "ImportThis" );
+        }
+
+        private void StartImport ( object obj )
+        {
+            int countF = 0;
+            int countH = 0;
+            int countV = 0;
+            foreach ( var f in SettingVM.FunctionsReadFromFile.Where( x => x.ImportThis ) )
+            {
+                FunctionVM.Add( f );
+                countF += 1;
+            }
+
+            foreach ( var h in SettingVM.HotstringsReadFromFile.Where( x => x.ImportThis ) )
+            {
+                if ( h.Value.Split( "\n" ).Length > 0 )
+                {
+                    h.HsTypeIsAdvanced = true;
+                }
+
+                HotstringVM.Add( h );
+                countH += 1;
+            }
+
+            foreach ( var v in SettingVM.VariablesReadFromFile.Where( x => x.ImportThis ) )
+            {
+                VariableVM.Add( v );
+                countV += 1;
+            }
+
+            _ = MessageBox.Show( $"{ countF + countH + countV } { Localization.Localization.MsgNumImported }\r\n{ countH }\t{ Localization.Localization.MsgImportedHotstrings }\r\n{ countF }\t{ Localization.Localization.MsgImportedFunctions }\r\n{ countV }\t{ Localization.Localization.MsgImportedVariables }" );
+        }
+
+        private bool VerifyAnyObjectsForImport ( object obj ) => SettingVM.FunctionsReadFromFile.Count( x => x.ImportThis ) + SettingVM.HotstringsReadFromFile.Count( x => x.ImportThis ) + SettingVM.VariablesReadFromFile.Count( x => x.ImportThis ) > 0;
+
+        private bool VerifyFileRead ( object obj )
+        {
+            return SettingVM.HotstringsReadFromFile.Count + SettingVM.FunctionsReadFromFile.Count + SettingVM.VariablesReadFromFile.Count > 0;
+        }
+
+        private bool VerifyValidFileForImport ( object obj )
+        {
+            return File.Exists( SettingVM.FileToImportPath ) && SettingVM.FileToImportPath.EndsWith( ".xml" );
         }
 
         private bool VerifyValidFunction ()

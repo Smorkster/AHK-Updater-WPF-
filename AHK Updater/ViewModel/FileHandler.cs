@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml;
 using System.Xml.Serialization;
 
 namespace AHKUpdater.ViewModel
@@ -80,6 +81,12 @@ namespace AHKUpdater.ViewModel
             return menu;
         }
 
+        internal static object ImportFile ( string fileToImportPath )
+        {
+            using XmlReader stream = XmlReader.Create( new FileStream( fileToImportPath, FileMode.Open ) );
+            return new XmlSerializer( typeof( ahk ) ).Deserialize( stream );
+        }
+
         private static ReadOnlySpan<char> CreateAHKMenuTriggers ()
         {
             string menutriggers = "";
@@ -101,6 +108,30 @@ namespace AHKUpdater.ViewModel
                 titleDivider += modeltowrite.SettingVM.GetSetting( "ScriptSettings", "TitleDividerCharacter" ).Value;
             }
             return $"; { titleDivider }\r\n; { TitleSection }\r\n; { titleDivider }\r\n";
+        }
+
+        internal static DataViewModel Read ( FileInfo _xmlFile )
+        {
+            using XmlReader stream = XmlReader.Create( new FileStream( _xmlFile.FullName, FileMode.Open ) );
+            DataViewModel dvm;
+
+            try
+            {
+                dvm = (DataViewModel) new XmlSerializer( typeof( DataViewModel ) ).Deserialize( stream );
+            }
+            catch ( InvalidOperationException )
+            {
+                dvm = new DataViewModel();
+                dvm.SettingVM.ResetAllDefault();
+            }
+
+            if ( string.IsNullOrEmpty( dvm.SettingVM.GetSetting( "Files", "ScriptFileLocation" ).Value ) )
+            {
+                dvm.SettingVM.GetSetting( "Files", "ScriptFileLocation" ).Value = _xmlFile.Directory.FullName;
+            }
+            dvm.InitiateFull();
+
+            return dvm;
         }
 
         private static ReadOnlySpan<char> FetchItemsForScript ( Type type, bool includeMenu )

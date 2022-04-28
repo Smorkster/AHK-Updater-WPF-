@@ -159,6 +159,18 @@
   <data name="BtnHotstringSaveContent" xml:space="preserve">
     <value>Spara hotstring</value>
   </data>
+  <data name="BtnImportFileContent" xml:space="preserve">
+    <value>Välj fil</value>
+  </data>
+  <data name="BtnImportReadFile" xml:space="preserve">
+    <value>Läs in fil</value>
+  </data>
+  <data name="BtnImportSelectAll" xml:space="preserve">
+    <value>Markera alla</value>
+  </data>
+  <data name="BtnImportSelectNone" xml:space="preserve">
+    <value>Avmarkera alla</value>
+  </data>
   <data name="BtnRemoveFromExtractListContent" xml:space="preserve">
     <value>Ta bort från extraheringslistan</value>
   </data>
@@ -170,6 +182,9 @@
   </data>
   <data name="BtnSelectPathContent" xml:space="preserve">
     <value>Välj</value>
+  </data>
+  <data name="BtnStartImport" xml:space="preserve">
+    <value>Starta import</value>
   </data>
   <data name="BtnVariableSaveContent" xml:space="preserve">
     <value>Spara variabel</value>
@@ -188,6 +203,9 @@
   </data>
   <data name="CodeNewParameter" xml:space="preserve">
     <value>NyParameter</value>
+  </data>
+  <data name="ExpImportHeader" xml:space="preserve">
+    <value>Importera gammal fil</value>
   </data>
   <data name="ExpParametersHeader" xml:space="preserve">
     <value>Parametrar</value>
@@ -225,14 +243,23 @@
   <data name="LblFunctionNameTitleContent" xml:space="preserve">
     <value>Funktionsnamn</value>
   </data>
+  <data name="LblFunctionsToImportTitle" xml:space="preserve">
+    <value>Funktioner</value>
+  </data>
   <data name="LblHotstringMenuItemTitleContent" xml:space="preserve">
     <value>Meny titel</value>
   </data>
   <data name="LblHotstringNameTitleContent" xml:space="preserve">
     <value>Hotstring namn</value>
   </data>
+  <data name="LblHotstringsToImportTitle" xml:space="preserve">
+    <value>Hostrings</value>
+  </data>
   <data name="LblHotstringSystemTitleContent" xml:space="preserve">
     <value>System</value>
+  </data>
+  <data name="LblImportFileContent" xml:space="preserve">
+    <value>Fil att importera</value>
   </data>
   <data name="LblSectionTextFunctionsTitleTitleContent" xml:space="preserve">
     <value>Titel för funktions-avsnittet</value>
@@ -254,6 +281,9 @@
   </data>
   <data name="LblVariableNameTitleContent" xml:space="preserve">
     <value>Variabel namn</value>
+  </data>
+  <data name="LblVariablesToImportTitle" xml:space="preserve">
+    <value>Variabler</value>
   </data>
   <data name="LblVariableValueTitleContent" xml:space="preserve">
     <value>Värde</value>
@@ -278,6 +308,18 @@
   </data>
   <data name="MsgExtractedTo" xml:space="preserve">
     <value>Valda objekt extraherade till:</value>
+  </data>
+  <data name="MsgImportedFunctions" xml:space="preserve">
+    <value>funktioner</value>
+  </data>
+  <data name="MsgImportedHotstrings" xml:space="preserve">
+    <value>hotstrings</value>
+  </data>
+  <data name="MsgImportedVariables" xml:space="preserve">
+    <value>variabler</value>
+  </data>
+  <data name="MsgNumImported" xml:space="preserve">
+    <value>importer gjordes</value>
   </data>
   <data name="MsgQSaveBeforeClosing" xml:space="preserve">
     <value>Det finns osparade ändringar. Vill du spara dessa innan applikationen avslutas?</value>

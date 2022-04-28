@@ -120,6 +120,15 @@ namespace AHKUpdater.ViewModel
         public void Add ( AhkVariable item )
         {
             VariableList.Add( item );
+            VariablesUpdated = true;
+            OnPropertyChanged( "VariableList" );
+        }
+
+        /// <summary> Add a new variable </summary>
+        /// <param name="item">The variable to be added</param>
+        public void Add ( AhkVariableToImport item )
+        {
+            Add( new AhkVariable( item ) );
         }
 
         public bool AnySelected ()

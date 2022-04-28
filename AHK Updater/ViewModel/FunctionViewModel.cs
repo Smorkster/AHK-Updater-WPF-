@@ -138,6 +138,13 @@ namespace AHKUpdater.ViewModel
             OnPropertyChanged( "FunctionsList" );
         }
 
+        /// <summary> Adds a new function </summary>
+        /// <param name="item">A new function</param>
+        public void Add ( AhkFunctionToImport item )
+        {
+            Add( new AhkFunction( item ) );
+        }
+
         /// <summary> Verify if a function is selected </summary>
         /// <returns>Boolean for if any function is selected</returns>
         public bool AnySelected ()

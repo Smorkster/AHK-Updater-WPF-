@@ -187,6 +187,42 @@ namespace AHKUpdater.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Select file.
+        /// </summary>
+        public static string BtnImportFileContent {
+            get {
+                return ResourceManager.GetString("BtnImportFileContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Read file content.
+        /// </summary>
+        public static string BtnImportReadFile {
+            get {
+                return ResourceManager.GetString("BtnImportReadFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select all.
+        /// </summary>
+        public static string BtnImportSelectAll {
+            get {
+                return ResourceManager.GetString("BtnImportSelectAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deselect all.
+        /// </summary>
+        public static string BtnImportSelectNone {
+            get {
+                return ResourceManager.GetString("BtnImportSelectNone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Remove from extraction list.
         /// </summary>
         public static string BtnRemoveFromExtractListContent {
@@ -219,6 +255,15 @@ namespace AHKUpdater.Localization {
         public static string BtnSelectPathContent {
             get {
                 return ResourceManager.GetString("BtnSelectPathContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import file.
+        /// </summary>
+        public static string BtnStartImport {
+            get {
+                return ResourceManager.GetString("BtnStartImport", resourceCulture);
             }
         }
         
@@ -273,6 +318,15 @@ namespace AHKUpdater.Localization {
         public static string CodeNewParameter {
             get {
                 return ResourceManager.GetString("CodeNewParameter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import old data.
+        /// </summary>
+        public static string ExpImportHeader {
+            get {
+                return ResourceManager.GetString("ExpImportHeader", resourceCulture);
             }
         }
         
@@ -385,6 +439,15 @@ namespace AHKUpdater.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Functions.
+        /// </summary>
+        public static string LblFunctionsToImportTitle {
+            get {
+                return ResourceManager.GetString("LblFunctionsToImportTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Menu title.
         /// </summary>
         public static string LblHotstringMenuItemTitleContent {
@@ -403,11 +466,29 @@ namespace AHKUpdater.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hostrings.
+        /// </summary>
+        public static string LblHotstringsToImportTitle {
+            get {
+                return ResourceManager.GetString("LblHotstringsToImportTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to System.
         /// </summary>
         public static string LblHotstringSystemTitleContent {
             get {
                 return ResourceManager.GetString("LblHotstringSystemTitleContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File to import.
+        /// </summary>
+        public static string LblImportFileContent {
+            get {
+                return ResourceManager.GetString("LblImportFileContent", resourceCulture);
             }
         }
         
@@ -471,6 +552,15 @@ namespace AHKUpdater.Localization {
         public static string LblVariableNameTitleContent {
             get {
                 return ResourceManager.GetString("LblVariableNameTitleContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Variables.
+        /// </summary>
+        public static string LblVariablesToImportTitle {
+            get {
+                return ResourceManager.GetString("LblVariablesToImportTitle", resourceCulture);
             }
         }
         
@@ -543,6 +633,42 @@ namespace AHKUpdater.Localization {
         public static string MsgExtractedTo {
             get {
                 return ResourceManager.GetString("MsgExtractedTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to functions.
+        /// </summary>
+        public static string MsgImportedFunctions {
+            get {
+                return ResourceManager.GetString("MsgImportedFunctions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to hotstrings.
+        /// </summary>
+        public static string MsgImportedHotstrings {
+            get {
+                return ResourceManager.GetString("MsgImportedHotstrings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to variables.
+        /// </summary>
+        public static string MsgImportedVariables {
+            get {
+                return ResourceManager.GetString("MsgImportedVariables", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to items were imported.
+        /// </summary>
+        public static string MsgNumImported {
+            get {
+                return ResourceManager.GetString("MsgNumImported", resourceCulture);
             }
         }
         
