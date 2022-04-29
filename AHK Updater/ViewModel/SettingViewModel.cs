@@ -27,7 +27,7 @@ namespace AHKUpdater.ViewModel
         private ObservableCollection<Message> _messageQueue = new ObservableCollection<Message>();
         private ObservableCollection<Setting> _settingList;
         private RelayCommand _cmdSelectFileToImport;
-        private string _fileToImportPath = @"C:\Users\6g1w\AHK - Standardsvar.xml";
+        private string _fileToImportPath = @"C:\Users\6g1w\AHKUpdaterData2.xml";
         private readonly ObservableCollection<AhkFunctionToImport> _functionsReadFromFile = new ObservableCollection<AhkFunctionToImport>();
         private readonly ObservableCollection<AhkHotstringToImport> _hotstringsReadFromFile = new ObservableCollection<AhkHotstringToImport>();
         private readonly ObservableCollection<AhkVariableToImport> _variablesReadFromFile = new ObservableCollection<AhkVariableToImport>();

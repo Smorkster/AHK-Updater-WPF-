@@ -214,41 +214,87 @@ namespace AHKUpdater.ViewModel
 
         private void ReadFile ( object obj )
         {
-            ahk t = (ahk) FileHandler.ImportFile( SettingVM.FileToImportPath );
-            foreach ( ahkFunction f in t.functions )
+            var importedData = FileHandler.ImportFile( SettingVM.FileToImportPath );
+            if ( importedData.GetType() == typeof( ahk ) )
             {
-                AhkFunctionToImport newfunction = new AhkFunctionToImport
+                foreach ( ahkFunction f in ( (ahk) importedData ).functions )
                 {
-                    Name = f.functionName,
-                    Value = f.Value.Split( ")" )[ 1 ]
-                };
+                    AhkFunctionToImport newfunction = new AhkFunctionToImport
+                    {
+                        Name = f.functionName,
+                        Value = f.Value.Split( ")" )[ 1 ]
+                    };
 
-                foreach ( string p in f.Value.Split( ")" )[ 0 ].Split( "(" )[ 1 ].Split( "," ) )
+                    foreach ( string p in f.Value.Split( ")" )[ 0 ].Split( "(" )[ 1 ].Split( "," ) )
+                    {
+                        newfunction.AddParameter( p );
+                    }
+
+                    SettingVM.FunctionsReadFromFile.Add( newfunction );
+                }
+                foreach ( ahkHotstring h in ( (ahk) importedData ).hotstrings )
                 {
-                    newfunction.AddParameter( p );
+                    AhkHotstringToImport newHotstring = new AhkHotstringToImport
+                    {
+                        Name = h.hotstringName,
+                        Value = h.Value,
+                        System = h.hotstringSystem,
+                        MenuTitle = h.hotstringMenuTitle
+                    };
+                    newHotstring.HsTypeIsAdvanced = newHotstring.Value.Split( "\n" ).Length > 1;
+                    SettingVM.HotstringsReadFromFile.Add( newHotstring );
+                }
+                foreach ( ahkVariable v in ( (ahk) importedData ).variables )
+                {
+                    AhkVariableToImport newVariable = new AhkVariableToImport
+                    {
+                        Name = v.variableName,
+                        Value = v.Value
+                    };
+                    SettingVM.VariablesReadFromFile.Add( newVariable );
+                }
+            }
+            else if ( importedData.GetType() == typeof( DataViewModel ) )
+            {
+                foreach ( AhkFunction f in ( (DataViewModel) importedData ).FunctionVM.FunctionList )
+                {
+                    AhkFunctionToImport newfunction = new AhkFunctionToImport
+                    {
+                        Name = f.Name,
+                        Value = f.Value
+                    };
+
+                    foreach ( Parameter p in f.ParameterList )
+                    {
+                        newfunction.AddParameter( p.Name );
+                    }
+
+                    SettingVM.FunctionsReadFromFile.Add( newfunction );
                 }
 
-                SettingVM.FunctionsReadFromFile.Add( newfunction );
-            }
-            foreach ( ahkHotstring h in t.hotstrings )
-            {
-                AhkHotstringToImport newHotstring = new AhkHotstringToImport
+                foreach ( AhkHotstring h in ( (DataViewModel) importedData ).HotstringVM.HotstringList )
                 {
-                    Name = h.hotstringName,
-                    Value = h.Value,
-                    System = h.hotstringSystem,
-                    MenuTitle = h.hotstringMenuTitle
-                };
-                SettingVM.HotstringsReadFromFile.Add( newHotstring );
-            }
-            foreach ( ahkVariable v in t.variables )
-            {
-                AhkVariableToImport newVariable = new AhkVariableToImport
+                    AhkHotstringToImport newHotstring = new AhkHotstringToImport
+                    {
+                        Name = h.Name,
+                        System = h.System,
+                        MenuTitle = h.MenuTitle,
+                        Value = h.Value,
+                    };
+                    newHotstring.HsTypeIsAdvanced = h.HsTypeIsAdvanced;
+
+                    SettingVM.HotstringsReadFromFile.Add( newHotstring );
+                }
+
+                foreach ( AhkVariable v in ( (DataViewModel) importedData ).VariableVM.VariableList )
                 {
-                    Name = v.variableName,
-                    Value = v.Value
-                };
-                SettingVM.VariablesReadFromFile.Add( newVariable );
+                    AhkVariableToImport newVariable = new AhkVariableToImport
+                    {
+                        Name = v.Name,
+                        Value = v.Value
+                    };
+                    SettingVM.VariablesReadFromFile.Add( newVariable );
+                }
             }
         }
 
@@ -327,11 +373,6 @@ namespace AHKUpdater.ViewModel
 
             foreach ( var h in SettingVM.HotstringsReadFromFile.Where( x => x.ImportThis ) )
             {
-                if ( h.Value.Split( "\n" ).Length > 0 )
-                {
-                    h.HsTypeIsAdvanced = true;
-                }
-
                 HotstringVM.Add( h );
                 countH += 1;
             }

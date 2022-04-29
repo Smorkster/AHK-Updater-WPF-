@@ -13,7 +13,6 @@ namespace AHKUpdater.Model
         private string _name = "";
         private string _system = "";
         private bool _upForExtraction = false;
-
         private string _value = "";
         private bool _hsTypeIsAdvanced = false;
 

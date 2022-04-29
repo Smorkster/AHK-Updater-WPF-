@@ -84,7 +84,14 @@ namespace AHKUpdater.ViewModel
         internal static object ImportFile ( string fileToImportPath )
         {
             using XmlReader stream = XmlReader.Create( new FileStream( fileToImportPath, FileMode.Open ) );
-            return new XmlSerializer( typeof( ahk ) ).Deserialize( stream );
+            try
+            {
+                return new XmlSerializer( typeof( ahk ) ).Deserialize( stream );
+            }
+            catch
+            {
+                return new XmlSerializer( typeof( DataViewModel ) ).Deserialize( stream );
+            }
         }
 
         private static ReadOnlySpan<char> CreateAHKMenuTriggers ()
@@ -94,7 +101,7 @@ namespace AHKUpdater.ViewModel
 
             foreach ( string system in systems )
             {
-                menutriggers += $"::{ modeltowrite.SettingVM.GetSetting( "ScriptOperations", "MenuShowTrigger" ).Value}{system}::\r\nmenu, {system}Menu, show, %A_CaretX%, %A_CaretY%\r\nReturn\r\n\r\n";
+                menutriggers += $"::{ modeltowrite.SettingVM.GetSetting( "ScriptOperations", "MenuShowTrigger" ).Value} {system }::\r\nmenu, { system }Menu, show, %A_CaretX%, %A_CaretY%\r\nReturn\r\n\r\n";
             }
 
             return menutriggers;
