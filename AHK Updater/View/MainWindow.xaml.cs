@@ -114,11 +114,12 @@ namespace AHKUpdater
             LvSettingsType.SelectionChanged += LvSettingsType_SelectionChanged;
 
             ( (DataViewModel) DataContext ).SettingVM.SetSomeDefaults();
-            if ( ( (DataViewModel) DataContext ).FunctionVM.FunctionList.Count == 0 )
+            if ( ( (DataViewModel) DataContext ).FunctionVM.FunctionList.Count == 0 || !( (DataViewModel) DataContext ).FunctionVM.NameExists( "PrintText" ) )
             {
                 AhkFunction printtext = new AhkFunction( "PrintText", "{\r\nClipboard =\r\nClipboard = % text %\r\nSleep 400\r\nSend ^ v\r\n}" );
                 printtext.AddParameter( "text" );
                 ( (DataViewModel) DataContext ).FunctionVM.Add( printtext );
+                ( (DataViewModel) DataContext ).FunctionVM.FunctionsUpdated = true;
             }
             Closing += ( (DataViewModel) DataContext ).MainWindow_Closing;
             Activate();

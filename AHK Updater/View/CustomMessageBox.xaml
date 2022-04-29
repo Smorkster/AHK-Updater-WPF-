@@ -3,12 +3,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:View="clr-namespace:AHKUpdater.View"
         xmlns:ViewModel="clr-namespace:AHKUpdater.ViewModel"
         mc:Ignorable="d"
         SizeToContent="WidthAndHeight"
         Title="{Binding Title}"
         WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        SizeChanged="Window_SizeChanged"
         x:Name="Window">
     <Window.DataContext>
         <ViewModel:CustomMessageBoxViewModel />
@@ -19,19 +20,7 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <Label Content="{Binding Message}" />
-        <ItemsControl Grid.Row="1"
-                      ItemsSource="{Binding Buttons}"
-                      HorizontalAlignment="Right">
-            <ItemsControl.Resources>
-                <Style TargetType="Button">
-                    <Setter Property="Margin"
-                            Value="5" />
-                    <Setter Property="Command"
-                            Value="{Binding ElementName=Window, Path=DataContext.CmdButtonClicked}" />
-                    <Setter Property="CommandParameter"
-                            Value="{Binding}" />
-                </Style>
-            </ItemsControl.Resources>
+        <ItemsControl Grid.Row="1" ItemsSource="{Binding Buttons}" HorizontalAlignment="Right">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal" />
@@ -39,7 +28,17 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Button Content="{Binding}"/>
+                    <Button>
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Command" Value="{Binding ElementName=Window, Path=DataContext.CmdButtonClicked}" />
+                                <Setter Property="CommandParameter" Value="{Binding}" />
+                                <Setter Property="Content" Value="{Binding}" />
+                                <Setter Property="Margin" Value="5" />
+                                <Setter Property="Padding" Value="5" />
+                            </Style>
+                        </Button.Style>
+                    </Button>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>

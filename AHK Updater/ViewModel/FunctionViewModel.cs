@@ -135,6 +135,7 @@ namespace AHKUpdater.ViewModel
         public void Add ( object item )
         {
             FunctionList.Add( (AhkFunction) item );
+            FunctionsUpdated = true;
             OnPropertyChanged( "FunctionsList" );
         }
 
@@ -152,6 +153,9 @@ namespace AHKUpdater.ViewModel
             return CurrentlyActive != null;
         }
 
+        /// <summary> Check if a functionname exists </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public bool NameExists ( string name )
         {
             return CurrentlyActive == null

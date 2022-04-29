@@ -61,7 +61,7 @@ namespace AHKUpdater.Model
 
         [XmlIgnore] public bool UpForExtraction { get { return _upForExtraction; } internal set { _upForExtraction = value; OnPropertyChanged( "UpForExtraction" ); } }
 
-        [XmlAttribute( "Value" )]
+        [XmlText]
         public string Value
         {
             get => _value;

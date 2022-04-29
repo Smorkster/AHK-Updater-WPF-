@@ -129,7 +129,7 @@ namespace AHKUpdater.Model
             }
         }
 
-        [XmlAttribute( "Value" )]
+        [XmlText]
         public string Value
         {
             get => _value;

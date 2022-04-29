@@ -30,5 +30,15 @@ namespace AHKUpdater.View
             ( (CustomMessageBoxViewModel) DataContext ).Title = _title;
             ( (CustomMessageBoxViewModel) DataContext ).Buttons = _buttons;
         }
+
+        private void Window_SizeChanged ( object sender, SizeChangedEventArgs e )
+        {
+            double screenWidth = SystemParameters.PrimaryScreenWidth;
+            double screenHeight = SystemParameters.PrimaryScreenHeight;
+            double windowWidth = Width;
+            double windowHeight = Height;
+            Left = ( screenWidth / 2 ) - ( windowWidth / 2 );
+            Top = ( screenHeight / 2 ) - ( windowHeight / 2 );
+        }
     }
 }
