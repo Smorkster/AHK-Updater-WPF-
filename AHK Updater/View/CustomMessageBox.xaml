@@ -7,20 +7,22 @@
         mc:Ignorable="d"
         SizeToContent="WidthAndHeight"
         Title="{Binding Title}"
-        WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
-        SizeChanged="Window_SizeChanged"
+        ContentRendered="CenterWindow"
         x:Name="Window">
     <Window.DataContext>
         <ViewModel:CustomMessageBoxViewModel />
     </Window.DataContext>
+    <Window.InputBindings>
+        <KeyBinding Gesture="Escape" Command="{Binding CmdEscapePressed}" />
+    </Window.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition />
         </Grid.RowDefinitions>
         <Label Content="{Binding Message}" />
-        <ItemsControl Grid.Row="1" ItemsSource="{Binding Buttons}" HorizontalAlignment="Right">
+        <ItemsControl Grid.Row="1" ItemsSource="{Binding Buttons}" HorizontalAlignment="Center">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal" />

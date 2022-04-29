@@ -126,9 +126,10 @@ namespace AHKUpdater.ViewModel
                     CustomMessageBox cmd = new CustomMessageBox( Localization.Localization.MsgQSaveBeforeClosing,
                                                                 Localization.Localization.MsgQSaveBeforeClosingTitle,
                                                                 new string[] { Localization.Localization.MsgQSaveBeforeClosingBtn1,
-                                                                Localization.Localization.MsgQSaveBeforeClosingBtn2,
-                                                                Localization.Localization.MsgQSaveBeforeClosingBtn3 } );
-                    cmd.ShowDialog();
+                                                                    Localization.Localization.MsgQSaveBeforeClosingBtn2,
+                                                                    Localization.Localization.MsgQSaveBeforeClosingBtn3 }
+                                                                );
+                    _ = cmd.ShowDialog();
                     if ( cmd.Answer() != 2 )
                     {
                         SaveToFile();

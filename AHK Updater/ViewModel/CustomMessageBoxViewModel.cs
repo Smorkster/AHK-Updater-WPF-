@@ -13,6 +13,7 @@ namespace AHKUpdater.ViewModel
         private ICommand _cmdButtonClicked;
         private string _message = "";
         private string _title = "";
+        private RelayCommand _cmdEscapePressed;
 
         public CustomMessageBoxViewModel ()
         {
@@ -26,13 +27,14 @@ namespace AHKUpdater.ViewModel
 
         public ICommand CmdButtonClicked => _cmdButtonClicked ??= new RelayCommand<string>( ButtonClicked );
 
+        public ICommand CmdEscapePressed => _cmdEscapePressed ??= new RelayCommand( PerformCmdEscapePressed );
+
         public string Message { get { return _message; } set { _message = value; OnPropertyChanged( "Message" ); } }
 
         public string Title { get { return _title; } set { _title = value; OnPropertyChanged( "Title" ); } }
 
-        private void ButtonClicked ( string obj )
+        private static void CloseThis ()
         {
-            _answer = Array.IndexOf( _buttons, obj );
             foreach ( Window w in Application.Current.Windows )
             {
                 if ( w.GetType().Name.Equals( "CustomMessageBox" ) )
@@ -42,6 +44,18 @@ namespace AHKUpdater.ViewModel
             }
         }
 
+        private void ButtonClicked ( string obj )
+        {
+            _answer = Array.IndexOf( _buttons, obj );
+            CloseThis();
+        }
+
         private void OnPropertyChanged ( string PropertyName ) { PropertyChanged?.Invoke( this, new PropertyChangedEventArgs( PropertyName ) ); }
+
+        private void PerformCmdEscapePressed ( object commandParameter )
+        {
+            _answer = -1;
+            CloseThis();
+        }
     }
 }

@@ -77,7 +77,7 @@ namespace AHKUpdater.ViewModel
                     catch ( Exception )
                     {
                         CustomMessageBox cmd = new CustomMessageBox( "You don't have permission to operate in this folder", "No permission", new string[] { "OK" } );
-                        cmd.ShowDialog();
+                        _ = cmd.ShowDialog();
                     }
                 }
                 return _suggestedPaths;
