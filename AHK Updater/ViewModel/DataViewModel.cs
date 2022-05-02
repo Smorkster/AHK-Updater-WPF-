@@ -29,6 +29,7 @@ namespace AHKUpdater.ViewModel
         private ICommand _cmdSelectAll;
         private ICommand _cmdSelectNone;
         private RelayCommand _cmdStartImport;
+        private int _xmlError = 0;
 
         public DataViewModel ()
         {
@@ -102,6 +103,8 @@ namespace AHKUpdater.ViewModel
         {
             get; set;
         }
+
+        public int XmlError { get { return _xmlError; } set { _xmlError = value; } }
 
         [XmlIgnore]
         public string XmlFile

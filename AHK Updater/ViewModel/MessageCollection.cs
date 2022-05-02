@@ -6,11 +6,8 @@ namespace AHKUpdater.ViewModel
 {
     public class MessageCollection : ObservableCollection<Message>, INotifyPropertyChanged
     {
-        private readonly ObservableCollection<Message> _messageQueue;
+        private readonly ObservableCollection<Message> _messageQueue = new ObservableCollection<Message>();
 
-        public MessageCollection ()
-        {
-            _messageQueue = new ObservableCollection<Message>();
-        }
+        public MessageCollection () { }
     }
 }

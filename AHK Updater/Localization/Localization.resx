@@ -306,6 +306,12 @@
   <data name="MsgCultureChanged" xml:space="preserve">
     <value>The new culture will be used at next startup</value>
   </data>
+  <data name="MsgErrorReadingFile" xml:space="preserve">
+    <value>Error when reading file. Will start with empty content</value>
+  </data>
+  <data name="MsgErrorReadingFileButton" xml:space="preserve">
+    <value>Ok</value>
+  </data>
   <data name="MsgExtractedTo" xml:space="preserve">
     <value>Selected objects extracted to:</value>
   </data>
@@ -317,6 +323,9 @@
   </data>
   <data name="MsgImportedVariables" xml:space="preserve">
     <value>variables</value>
+  </data>
+  <data name="MsgNoXmlFileFound" xml:space="preserve">
+    <value>Couldn't find any XML-file to read content. Will start with empty content.</value>
   </data>
   <data name="MsgNumImported" xml:space="preserve">
     <value>items were imported</value>

@@ -306,6 +306,12 @@
   <data name="MsgCultureChanged" xml:space="preserve">
     <value>Den nya kulturen kommer användas nästa gång applikationen startas</value>
   </data>
+  <data name="MsgErrorReadingFile" xml:space="preserve">
+    <value>Fel vid läsning av fil. Innehållet kommer vara tomt.</value>
+  </data>
+  <data name="MsgErrorReadingFileButton" xml:space="preserve">
+    <value>Ok</value>
+  </data>
   <data name="MsgExtractedTo" xml:space="preserve">
     <value>Valda objekt extraherade till:</value>
   </data>
@@ -317,6 +323,9 @@
   </data>
   <data name="MsgImportedVariables" xml:space="preserve">
     <value>variabler</value>
+  </data>
+  <data name="MsgNoXmlFileFound" xml:space="preserve">
+    <value>Hittade ingen XML-fil. Innehållet kommer vara tomt.</value>
   </data>
   <data name="MsgNumImported" xml:space="preserve">
     <value>importer gjordes</value>

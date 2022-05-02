@@ -1,5 +1,6 @@
 ﻿using AHKUpdater.Library;
 using AHKUpdater.Model;
+using AHKUpdater.View;
 using AHKUpdater.ViewModel;
 using System;
 using System.Diagnostics;
@@ -37,10 +38,11 @@ namespace AHKUpdater
                 cultureToUse = cultureName;
             }
 
+            ContentRendered += MainWindow_ContentRendered;
             Localization.Localization.Culture = CultureInfo.GetCultureInfo( cultureToUse );
             Language = XmlLanguage.GetLanguage( cultureToUse );
-            InitializeComponent();
             Title = $"Version { FileVersionInfo.GetVersionInfo( Assembly.GetExecutingAssembly().Location ).ProductVersion }";
+            InitializeComponent();
         }
 
         private void CbHotstringSystems_SelectionChanged ( object sender, SelectionChangedEventArgs e )
@@ -65,15 +67,6 @@ namespace AHKUpdater
             }
         }
 
-        private void LvHotstrings_SelectionChanged ( object sender, SelectionChangedEventArgs e )
-        {
-            /*if ( LvHotstrings.SelectedItem != null )
-            {
-                AhkHotstring h = ( (HotstringViewModel) TiHotstrings.DataContext ).HotstringList.First( x => x.Id.Equals( ( (AhkHotstring) LvHotstrings.SelectedItem ).Id ) ).CopyThis();
-                ( (HotstringViewModel) TiHotstrings.DataContext ).CurrentlyActive = h;
-            }*/
-        }
-
         private void LvSettingsType_SelectionChanged ( object sender, SelectionChangedEventArgs e )
         {
             if ( LvSettingsType.ItemsSource != null )
@@ -96,7 +89,7 @@ namespace AHKUpdater
             return LvSettingsType.SelectedValue != null && ( obj as Setting ).SettingGroup.Equals( Regex.Replace( LvSettingsType.SelectedValue.ToString(), "\\s", "" ), StringComparison.OrdinalIgnoreCase );
         }
 
-        private void Window_ContentRendered ( object sender, EventArgs e )
+        private void MainWindow_ContentRendered ( object sender, EventArgs e )
         {
             CollectionView hotstringCV = (CollectionView) CollectionViewSource.GetDefaultView( LvHotstrings.ItemsSource );
             CollectionView settingsCV = (CollectionView) CollectionViewSource.GetDefaultView( IcSettings.ItemsSource );
@@ -108,7 +101,6 @@ namespace AHKUpdater
             LvFunctions.SelectedIndex = -1;
             LvVariables.SelectedIndex = -1;
 
-            LvHotstrings.SelectionChanged += LvHotstrings_SelectionChanged;
             LvFunctions.SelectionChanged += LvFunctions_SelectionChanged;
             LvVariables.SelectionChanged += LvVariables_SelectionChanged;
             LvSettingsType.SelectionChanged += LvSettingsType_SelectionChanged;
@@ -122,6 +114,23 @@ namespace AHKUpdater
                 ( (DataViewModel) DataContext ).FunctionVM.FunctionsUpdated = true;
             }
             Closing += ( (DataViewModel) DataContext ).MainWindow_Closing;
+            if ( ( (DataViewModel) DataContext ).XmlError > 0 )
+            {
+                string message = "";
+
+                switch ( ( (DataViewModel) DataContext ).XmlError )
+                {
+                    case 1:
+                        message = Localization.Localization.MsgNoXmlFileFound;
+                        break;
+                    case 2:
+                        message = Localization.Localization.MsgErrorReadingFile;
+                        break;
+                }
+                CustomMessageBox cmd = new CustomMessageBox( message, "", new string[] { Localization.Localization.MsgErrorReadingFileButton } );
+                _ = cmd.ShowDialog();
+            }
+
             Activate();
         }
 

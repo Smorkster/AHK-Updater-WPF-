@@ -25,7 +25,7 @@ namespace AHKUpdater.ViewModel
         private ICommand _cmdResetDefault;
         private ICommand _cmdSaveSettings;
         private ObservableCollection<Message> _messageQueue = new ObservableCollection<Message>();
-        private ObservableCollection<Setting> _settingList;
+        private ObservableCollection<Setting> _settingList = new ObservableCollection<Setting>();
         private RelayCommand _cmdSelectFileToImport;
         private string _fileToImportPath = @"C:\Users\6g1w\AHKUpdaterData2.xml";
         private readonly ObservableCollection<AhkFunctionToImport> _functionsReadFromFile = new ObservableCollection<AhkFunctionToImport>();
@@ -34,7 +34,6 @@ namespace AHKUpdater.ViewModel
 
         public SettingViewModel ()
         {
-            SettingList = new ObservableCollection<Setting>();
             SettingsUpdated = false;
             SettingsChanged = false;
             Setting.OnItemChanged += OnSettingsChanged;

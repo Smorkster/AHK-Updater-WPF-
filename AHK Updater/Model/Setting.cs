@@ -52,7 +52,7 @@ namespace AHKUpdater.Model
         [XmlAttribute( "SettingType" )]
         public string SettingType { get; set; }
 
-        [XmlAttribute( "Value" )]
+        [XmlText]
         public string Value
         {
             get

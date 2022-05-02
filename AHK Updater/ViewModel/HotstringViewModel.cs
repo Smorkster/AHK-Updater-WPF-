@@ -18,11 +18,10 @@ namespace AHKUpdater.ViewModel
         private ICommand _cmdSaveCurrentlyActive;
         private AhkHotstring _currentlyActive;
         private ObservableCollection<Message> _messageQueue = new ObservableCollection<Message>();
-        private ObservableCollection<AhkHotstring> _hotstringList;
+        private ObservableCollection<AhkHotstring> _hotstringList = new ObservableCollection<AhkHotstring>();
 
         public HotstringViewModel ()
         {
-            HotstringList = new ObservableCollection<AhkHotstring>();
             HotstringsUpdated = false;
             CurrentlyActive = null;
         }

@@ -628,6 +628,24 @@ namespace AHKUpdater.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error when reading file. Will start with empty content.
+        /// </summary>
+        public static string MsgErrorReadingFile {
+            get {
+                return ResourceManager.GetString("MsgErrorReadingFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ok.
+        /// </summary>
+        public static string MsgErrorReadingFileButton {
+            get {
+                return ResourceManager.GetString("MsgErrorReadingFileButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Selected objects extracted to:.
         /// </summary>
         public static string MsgExtractedTo {
@@ -660,6 +678,15 @@ namespace AHKUpdater.Localization {
         public static string MsgImportedVariables {
             get {
                 return ResourceManager.GetString("MsgImportedVariables", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Couldn&apos;t find any XML-file to read content. Will start with empty content..
+        /// </summary>
+        public static string MsgNoXmlFileFound {
+            get {
+                return ResourceManager.GetString("MsgNoXmlFileFound", resourceCulture);
             }
         }
         

@@ -13,46 +13,12 @@
     d:DataContext="{d:DesignInstance Type=viewmodel:DataViewModel}"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    x:Name="Window"
-    ContentRendered="Window_ContentRendered"
-    >
+    x:Name="Window">
     <Window.SizeToContent>WidthAndHeight</Window.SizeToContent>
     <Window.WindowStartupLocation>CenterScreen</Window.WindowStartupLocation>
     <Window.InputBindings>
-        <KeyBinding>
-            <KeyBinding.Command>
-                <Binding>
-                    <Binding.Path>CmdNew</Binding.Path>
-                </Binding>
-            </KeyBinding.Command>
-            <KeyBinding.CommandParameter>
-                <Binding>
-                    <Binding.ElementName>tabMain</Binding.ElementName>
-                    <Binding.Path>SelectedIndex</Binding.Path>
-                </Binding>
-            </KeyBinding.CommandParameter>
-            <KeyBinding.Gesture>
-                <KeyGesture>
-                    CTRL+N
-                </KeyGesture>
-            </KeyBinding.Gesture>
-        </KeyBinding>
-        <KeyBinding>
-            <KeyBinding.Command>
-                <Binding>
-                    <Binding.Path>CmdSaveToFile</Binding.Path>
-                </Binding>
-            </KeyBinding.Command>
-            <KeyBinding.CommandParameter>
-                <Binding>
-                    <Binding.ElementName>tabMain</Binding.ElementName>
-                    <Binding.Path>SelectedIndex</Binding.Path>
-                </Binding>
-            </KeyBinding.CommandParameter>
-            <KeyBinding.Gesture>
-                <KeyGesture>CTRL+SHIFT+S</KeyGesture>
-            </KeyBinding.Gesture>
-        </KeyBinding>
+        <KeyBinding Command="{Binding CmdNew}" CommandParameter="{Binding ElementName=tabMain, Path=SelectedIndex}" Gesture="CTRL+N" />
+        <KeyBinding Command="{Binding CmdSaveToFile}" CommandParameter="{Binding ElementName=tabMain, Path=SelectedIndex}" Gesture="CTRL+SHIFT+S" />
     </Window.InputBindings>
     <Window.Resources>
         <DataTemplate x:Key="DtMessagesTemplate">

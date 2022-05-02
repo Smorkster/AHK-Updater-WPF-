@@ -17,14 +17,10 @@ namespace AHKUpdater.ViewModel
         private ICommand _cmdExtractToScript;
         private ICommand _cmdExtractToXml;
         private ICommand _cmdRemoveFromExtraction;
-        private DataViewModel _extractionDvm;
-        private MessageCollection _messageQueue;
+        private DataViewModel _extractionDvm = new DataViewModel();
+        private MessageCollection _messageQueue = new MessageCollection();
 
-        public ExtractionViewModel ()
-        {
-            _extractionDvm = new DataViewModel();
-            MessageQueue = new MessageCollection();
-        }
+        public ExtractionViewModel () { }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

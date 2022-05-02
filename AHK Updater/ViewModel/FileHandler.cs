@@ -119,22 +119,38 @@ namespace AHKUpdater.ViewModel
 
         internal static DataViewModel Read ( FileInfo _xmlFile )
         {
-            using XmlReader stream = XmlReader.Create( new FileStream( _xmlFile.FullName, FileMode.Open ) );
             DataViewModel dvm;
 
             try
             {
+                using XmlReader stream = XmlReader.Create( new FileStream( _xmlFile.FullName, FileMode.Open ) );
                 dvm = (DataViewModel) new XmlSerializer( typeof( DataViewModel ) ).Deserialize( stream );
+            }
+            catch ( FileNotFoundException )
+            {
+                dvm = new DataViewModel
+                {
+                    XmlError = 1
+                };
             }
             catch ( InvalidOperationException )
             {
-                dvm = new DataViewModel();
-                dvm.SettingVM.ResetAllDefault();
+                dvm = new DataViewModel
+                {
+                    XmlError = 2
+                };
             }
 
-            if ( string.IsNullOrEmpty( dvm.SettingVM.GetSetting( "Files", "ScriptFileLocation" ).Value ) )
+            if ( dvm.SettingVM.SettingList.Count == 0 )
+            {
+                dvm.SettingVM.ResetAllDefault();
+                dvm.SettingVM.GetSetting( "Files", "ScriptFileLocation" ).Value = _xmlFile.Directory.FullName;
+                dvm.SettingVM.GetSetting( "Files", "ScriptFileLocation" ).DefaultValue = _xmlFile.Directory.FullName;
+            }
+            else if ( string.IsNullOrEmpty( dvm.SettingVM.GetSetting( "Files", "ScriptFileLocation" ).Value ) )
             {
                 dvm.SettingVM.GetSetting( "Files", "ScriptFileLocation" ).Value = _xmlFile.Directory.FullName;
+                dvm.SettingVM.GetSetting( "Files", "ScriptFileLocation" ).DefaultValue = _xmlFile.Directory.FullName;
             }
             dvm.InitiateFull();
 

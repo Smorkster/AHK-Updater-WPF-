@@ -17,11 +17,10 @@ namespace AHKUpdater.ViewModel
         private ICommand _cmdRemove;
         private AhkVariable _currentlyActive;
         private ObservableCollection<Message> _variableError = new ObservableCollection<Message>();
-        private ObservableCollection<AhkVariable> _variableList;
+        private ObservableCollection<AhkVariable> _variableList = new ObservableCollection<AhkVariable>();
 
         public VariableViewModel ()
         {
-            VariableList = new ObservableCollection<AhkVariable>();
             CurrentlyActive = null;
         }
 

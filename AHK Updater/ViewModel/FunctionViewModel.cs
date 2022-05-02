@@ -18,11 +18,11 @@ namespace AHKUpdater.ViewModel
         private ICommand _cmdRemove;
         private ICommand _cmdRemoveParameter;
         private AhkFunction _currentlyActive;
+        private ObservableCollection<AhkFunction> _functionList = new ObservableCollection<AhkFunction>();
         private MessageCollection _messageQueue = new MessageCollection();
 
         public FunctionViewModel ()
         {
-            FunctionList = new ObservableCollection<AhkFunction>();
             CurrentlyActive = null;
             Parameter.OnItemChanged += OnParameterChanged;
         }
@@ -97,10 +97,7 @@ namespace AHKUpdater.ViewModel
 
         /// <summary> Returns all saved functions as a list </summary>
         /// <returns>Functions as a list</returns>
-        public ObservableCollection<AhkFunction> FunctionList
-        {
-            get;
-        }
+        public ObservableCollection<AhkFunction> FunctionList { get { return _functionList; } private set { _functionList = value; } }
 
         [XmlIgnore]
         public bool FunctionsUpdated
