@@ -1060,6 +1060,15 @@ namespace AHKUpdater.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You can&apos;t remove a default function.
+        /// </summary>
+        public static string ValidationMsgFunctionRemovalOfDefaults {
+            get {
+                return ResourceManager.GetString("ValidationMsgFunctionRemovalOfDefaults", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No culture have been specified in the save-file. Default value of &apos;en&apos; (english) will be used..
         /// </summary>
         public static string ValidationNoCultureSpecified {

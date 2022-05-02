@@ -450,6 +450,9 @@
   <data name="ValidationInvalidCultureInfoUsed" xml:space="preserve">
     <value>The string located in the save-file is: </value>
   </data>
+  <data name="ValidationMsgFunctionRemovalOfDefaults" xml:space="preserve">
+    <value>You can't remove a default function</value>
+  </data>
   <data name="ValidationNoCultureSpecified" xml:space="preserve">
     <value>No culture have been specified in the save-file. Default value of 'en' (english) will be used.</value>
   </data>

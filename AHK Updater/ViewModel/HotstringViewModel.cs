@@ -17,8 +17,8 @@ namespace AHKUpdater.ViewModel
         private ICommand _cmdRemove;
         private ICommand _cmdSaveCurrentlyActive;
         private AhkHotstring _currentlyActive;
-        private ObservableCollection<Message> _messageQueue = new ObservableCollection<Message>();
         private ObservableCollection<AhkHotstring> _hotstringList = new ObservableCollection<AhkHotstring>();
+        private ObservableCollection<Message> _messageQueue = new ObservableCollection<Message>();
 
         public HotstringViewModel ()
         {
@@ -70,18 +70,6 @@ namespace AHKUpdater.ViewModel
             }
         }
 
-        /// <summary> Contains any errorinformation about values for the current hotstring </summary>
-        [XmlIgnore]
-        public ObservableCollection<Message> MessageQueue
-        {
-            get => _messageQueue;
-            set
-            {
-                _messageQueue = value;
-                OnPropertyChanged( "MessageQueue" );
-            }
-        }
-
         /// <summary> Property for the list of hotstrings</summary>
         public ObservableCollection<AhkHotstring> HotstringList
         {
@@ -103,6 +91,18 @@ namespace AHKUpdater.ViewModel
         /// <summary> Property for a list of systems for all the hotstrings </summary>
         [XmlIgnore]
         public ObservableCollection<string> HotstringSystemList => new ObservableCollection<string>( HotstringList.Select( x => x.System ).Distinct() );
+
+        /// <summary> Contains any errorinformation about values for the current hotstring </summary>
+        [XmlIgnore]
+        public ObservableCollection<Message> MessageQueue
+        {
+            get => _messageQueue;
+            set
+            {
+                _messageQueue = value;
+                OnPropertyChanged( "MessageQueue" );
+            }
+        }
 
         /// <summary> Property for the currently selected hotstring </summary>
         [XmlIgnore]
@@ -157,7 +157,6 @@ namespace AHKUpdater.ViewModel
         public void Add ( AhkHotstring item )
         {
             HotstringList.Add( item );
-            HotstringsUpdated = true;
             OnPropertyChanged( "HotstringSystemList" );
             OnPropertyChanged( "HotstringList" );
             OnPropertyChanged( "SelectedSystem" );
@@ -205,7 +204,6 @@ namespace AHKUpdater.ViewModel
             {
                 _ = HotstringList.Remove( HotstringList.First( x => x.Id.Equals( CurrentlyActive.Id ) ) );
 
-                OnPropertyChanged( "Name" );
                 OnPropertyChanged( "HotstringSystemList" );
                 OnPropertyChanged( "HotstringList" );
             }
@@ -225,8 +223,6 @@ namespace AHKUpdater.ViewModel
             {
                 HotstringList.First( x => x.Id.Equals( CurrentlyActive.Id ) ).Update( CurrentlyActive );
             }
-
-            HotstringsUpdated = true;
         }
 
         /// <summary> Delegate to test if the values for the hotstring are valid, otherwise button is disabled </summary>
@@ -246,6 +242,8 @@ namespace AHKUpdater.ViewModel
             }
             return !MessageQueue.Any( x => x.Type == MessageType.Error ) && !Unchanged;
         }
+
+        internal void HotstringList_CollectionChanged ( object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e ) { HotstringsUpdated = true; }
 
         private void OnPropertyChanged ( string PropertyName )
         {

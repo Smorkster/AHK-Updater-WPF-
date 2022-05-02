@@ -450,6 +450,9 @@
   <data name="ValidationInvalidCultureInfoUsed" xml:space="preserve">
     <value>Strängen som finns i spara-filen är:</value>
   </data>
+  <data name="ValidationMsgFunctionRemovalOfDefaults" xml:space="preserve">
+    <value>Du kan inte ta bort en standardfunktion</value>
+  </data>
   <data name="ValidationNoCultureSpecified" xml:space="preserve">
     <value>Ingen kultur har specificerats i spara-filen. Standardvärdet 'en' (engelska) kommer att användas.</value>
   </data>

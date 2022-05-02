@@ -201,6 +201,8 @@ namespace AHKUpdater.ViewModel
             return !MessageQueue.Any( x => x.Type == MessageType.Error ) && !Unchanged;
         }
 
+        internal void VariableList_CollectionChanged ( object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e ) { VariablesUpdated = true; }
+
         private void OnPropertyChanged ( string PropertyName )
         {
             PropertyChanged?.Invoke( this, new PropertyChangedEventArgs( PropertyName ) );

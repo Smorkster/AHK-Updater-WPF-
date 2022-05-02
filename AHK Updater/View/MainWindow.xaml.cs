@@ -18,10 +18,6 @@ namespace AHKUpdater
     /// <summary> Interaction logic for MainWindow.xaml </summary>
     public partial class MainWindow : Window
     {
-        private void CbHotstringSystems_DropDownOpened ( object sender, EventArgs e )
-        {
-        }
-
         public MainWindow ( string cultureName )
         {
             string cultureToUse = "en";
@@ -45,6 +41,10 @@ namespace AHKUpdater
             InitializeComponent();
         }
 
+        private void CbHotstringSystems_DropDownOpened ( object sender, EventArgs e )
+        {
+        }
+
         private void CbHotstringSystems_SelectionChanged ( object sender, SelectionChangedEventArgs e )
         {
             if ( LvHotstrings.ItemsSource != null )
@@ -56,6 +56,12 @@ namespace AHKUpdater
         private bool HotstringViewSource_Filter ( object e )
         {
             return CbHotstringSystems.SelectedValue != null && ( e as AhkHotstring ).System.Equals( CbHotstringSystems.SelectedValue.ToString(), StringComparison.OrdinalIgnoreCase );
+        }
+
+        private void ListViewItem_PreviewMouseLeftButtonDown ( object sender, System.Windows.Input.MouseButtonEventArgs e )
+        {
+            AhkHotstring h = ( (AhkHotstring) ( (ListViewItem) sender ).DataContext ).CopyThis();
+            ( (HotstringViewModel) TiHotstrings.DataContext ).CurrentlyActive = h;
         }
 
         private void LvFunctions_SelectionChanged ( object sender, SelectionChangedEventArgs e )
@@ -84,29 +90,17 @@ namespace AHKUpdater
             }
         }
 
-        private bool SettingsViewSource_Filter ( object obj )
-        {
-            return LvSettingsType.SelectedValue != null && ( obj as Setting ).SettingGroup.Equals( Regex.Replace( LvSettingsType.SelectedValue.ToString(), "\\s", "" ), StringComparison.OrdinalIgnoreCase );
-        }
-
         private void MainWindow_ContentRendered ( object sender, EventArgs e )
         {
             CollectionView hotstringCV = (CollectionView) CollectionViewSource.GetDefaultView( LvHotstrings.ItemsSource );
             CollectionView settingsCV = (CollectionView) CollectionViewSource.GetDefaultView( IcSettings.ItemsSource );
 
-            hotstringCV.Filter = HotstringViewSource_Filter;
-            settingsCV.Filter = SettingsViewSource_Filter;
-
             CbHotstringSystems.SelectedIndex = -1;
             LvFunctions.SelectedIndex = -1;
             LvVariables.SelectedIndex = -1;
 
-            LvFunctions.SelectionChanged += LvFunctions_SelectionChanged;
-            LvVariables.SelectionChanged += LvVariables_SelectionChanged;
-            LvSettingsType.SelectionChanged += LvSettingsType_SelectionChanged;
-
             ( (DataViewModel) DataContext ).SettingVM.SetSomeDefaults();
-            if ( ( (DataViewModel) DataContext ).FunctionVM.FunctionList.Count == 0 || !( (DataViewModel) DataContext ).FunctionVM.NameExists( "PrintText" ) )
+            if ( ( (DataViewModel) DataContext ).FunctionVM.FunctionList.Count == 0 || !( (DataViewModel) DataContext ).FunctionVM.NameExistsAll( "PrintText" ) )
             {
                 AhkFunction printtext = new AhkFunction( "PrintText", "{\r\nClipboard =\r\nClipboard = % text %\r\nSleep 400\r\nSend ^ v\r\n}" );
                 printtext.AddParameter( "text" );
@@ -131,13 +125,23 @@ namespace AHKUpdater
                 _ = cmd.ShowDialog();
             }
 
+
+            hotstringCV.Filter = HotstringViewSource_Filter;
+            settingsCV.Filter = SettingsViewSource_Filter;
+
+            LvFunctions.SelectionChanged += LvFunctions_SelectionChanged;
+            LvVariables.SelectionChanged += LvVariables_SelectionChanged;
+            LvSettingsType.SelectionChanged += LvSettingsType_SelectionChanged;
+            ( (DataViewModel) DataContext ).HotstringVM.HotstringList.CollectionChanged += ( (DataViewModel) DataContext ).HotstringVM.HotstringList_CollectionChanged;
+            ( (DataViewModel) DataContext ).VariableVM.VariableList.CollectionChanged += ( (DataViewModel) DataContext ).VariableVM.VariableList_CollectionChanged;
+            ( (DataViewModel) DataContext ).FunctionVM.FunctionList.CollectionChanged += ( (DataViewModel) DataContext ).FunctionVM.FunctionList_CollectionChanged;
+
             Activate();
         }
 
-        private void ListViewItem_PreviewMouseLeftButtonDown ( object sender, System.Windows.Input.MouseButtonEventArgs e )
+        private bool SettingsViewSource_Filter ( object obj )
         {
-            AhkHotstring h = ( (AhkHotstring) ( (ListViewItem) sender ).DataContext ).CopyThis();
-            ( (HotstringViewModel) TiHotstrings.DataContext ).CurrentlyActive = h;
+            return LvSettingsType.SelectedValue != null && ( obj as Setting ).SettingGroup.Equals( Regex.Replace( LvSettingsType.SelectedValue.ToString(), "\\s", "" ), StringComparison.OrdinalIgnoreCase );
         }
     }
 }

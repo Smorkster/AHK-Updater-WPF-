@@ -521,7 +521,6 @@
                                 <Setter Property="DisplayMemberPath" Value="Name" />
                                 <Setter Property="Grid.RowSpan" Value="2" />
                                 <Setter Property="ItemsSource" Value="{Binding Source={StaticResource CvsFunctionsList}}" />
-                                <Setter Property="SelectedIndex" Value="-1" />
                             </Style>
                         </ListView.Style>
                     </ListView>
@@ -656,26 +655,23 @@
                                 </Grid>
                             </ScrollViewer>
                         </Expander>
-                        <TextBlock x:Name="TblFunctionHeader" Grid.Row="2">
+                        <TextBlock x:Name="TblFunctionHeader">
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">
-                                    <Setter Property="Grid.ColumnSpan" Value="3" />
+                                    <Setter Property="Grid.ColumnSpan" Value="2" />
+                                    <Setter Property="Grid.Row" Value="1" />
                                     <Setter Property="Margin" Value="{StaticResource StdMargin}" />
                                     <Setter Property="Text" Value="{Binding ElementName=TiFunctions, Path=DataContext.FunctionHeader, UpdateSourceTrigger=PropertyChanged}" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding ElementName=ExpParameters, Path=IsExpanded}" Value="True">
-                                            <Setter Property="Grid.ColumnSpan" Value="2" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
                                 </Style>
                             </TextBlock.Style>
                         </TextBlock>
-                        <TextBox x:Name="TbFunctionCode" Grid.Row="3">
+                        <TextBox x:Name="TbFunctionCode">
                             <TextBox.Style>
                                 <Style TargetType="TextBox" BasedOn="{StaticResource TbBaseStyle}">
                                     <Setter Property="AcceptsReturn" Value="True" />
                                     <Setter Property="AcceptsTab" Value="True" />
                                     <Setter Property="Grid.ColumnSpan" Value="3" />
+                                    <Setter Property="Grid.Row" Value="2" />
                                     <Setter Property="Text" Value="{Binding Path=Value, UpdateSourceTrigger=PropertyChanged}" />
                                     <Setter Property="VerticalContentAlignment" Value="Top" />
                                     <Style.Triggers>

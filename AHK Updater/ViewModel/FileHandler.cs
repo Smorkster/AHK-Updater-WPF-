@@ -12,6 +12,67 @@ namespace AHKUpdater.ViewModel
     {
         static DataViewModel modeltowrite;
 
+        internal static object ImportFile ( string fileToImportPath )
+        {
+            using XmlReader stream = XmlReader.Create( new FileStream( fileToImportPath, FileMode.Open ) );
+            try
+            {
+                return new XmlSerializer( typeof( ahk ) ).Deserialize( stream );
+            }
+            catch
+            {
+                return new XmlSerializer( typeof( DataViewModel ) ).Deserialize( stream );
+            }
+        }
+
+        internal static DataViewModel Read ( FileInfo _xmlFile )
+        {
+            DataViewModel dvm;
+
+            try
+            {
+                using XmlReader stream = XmlReader.Create( new FileStream( _xmlFile.FullName, FileMode.Open ) );
+                dvm = (DataViewModel) new XmlSerializer( typeof( DataViewModel ) ).Deserialize( stream );
+            }
+            catch ( FileNotFoundException )
+            {
+                dvm = new DataViewModel
+                {
+                    XmlError = 1
+                };
+            }
+            catch ( InvalidOperationException )
+            {
+                dvm = new DataViewModel
+                {
+                    XmlError = 2
+                };
+            }
+
+            if ( dvm.SettingVM.SettingList.Count == 0 )
+            {
+                dvm.SettingVM.ResetAllDefault();
+                dvm.SettingVM.GetSetting( "Files", "ScriptFileLocation" ).Value = _xmlFile.Directory.FullName;
+                dvm.SettingVM.GetSetting( "Files", "ScriptFileLocation" ).DefaultValue = _xmlFile.Directory.FullName;
+            }
+            else if ( string.IsNullOrEmpty( dvm.SettingVM.GetSetting( "Files", "ScriptFileLocation" ).Value ) )
+            {
+                dvm.SettingVM.GetSetting( "Files", "ScriptFileLocation" ).Value = _xmlFile.Directory.FullName;
+                dvm.SettingVM.GetSetting( "Files", "ScriptFileLocation" ).DefaultValue = _xmlFile.Directory.FullName;
+            }
+            dvm.InitiateFull();
+
+            return dvm;
+        }
+
+        internal static void WriteExtractedXml ( DataViewModel dvm )
+        {
+            using FileStream stream = new FileStream( $"{ dvm.SettingVM.GetSetting( "Files", "XmlFileLocationForExtraction" ).Value }\\{ dvm.SettingVM.GetSetting( "Files", "FileName" ).Value }.xml", FileMode.Create );
+            XmlSerializer xsz = new XmlSerializer( dvm.GetType() );
+
+            xsz.Serialize( stream, dvm );
+        }
+
         internal static string WriteScript ( DataViewModel extractionDvm )
         {
             modeltowrite = extractionDvm;
@@ -56,14 +117,6 @@ namespace AHKUpdater.ViewModel
             xsz.Serialize( stream, dvm );
         }
 
-        internal static void WriteExtractedXml ( DataViewModel dvm )
-        {
-            using FileStream stream = new FileStream( $"{ dvm.SettingVM.GetSetting( "Files", "XmlFileLocationForExtraction" ).Value }\\{ dvm.SettingVM.GetSetting( "Files", "FileName" ).Value }.xml", FileMode.Create );
-            XmlSerializer xsz = new XmlSerializer( dvm.GetType() );
-
-            xsz.Serialize( stream, dvm );
-        }
-
         private static ReadOnlySpan<char> CreateAHKMenu ()
         {
             string menu = "";
@@ -79,19 +132,6 @@ namespace AHKUpdater.ViewModel
             menu += "Return\r\n";
 
             return menu;
-        }
-
-        internal static object ImportFile ( string fileToImportPath )
-        {
-            using XmlReader stream = XmlReader.Create( new FileStream( fileToImportPath, FileMode.Open ) );
-            try
-            {
-                return new XmlSerializer( typeof( ahk ) ).Deserialize( stream );
-            }
-            catch
-            {
-                return new XmlSerializer( typeof( DataViewModel ) ).Deserialize( stream );
-            }
         }
 
         private static ReadOnlySpan<char> CreateAHKMenuTriggers ()
@@ -115,46 +155,6 @@ namespace AHKUpdater.ViewModel
                 titleDivider += modeltowrite.SettingVM.GetSetting( "ScriptSettings", "TitleDividerCharacter" ).Value;
             }
             return $"; { titleDivider }\r\n; { TitleSection }\r\n; { titleDivider }\r\n";
-        }
-
-        internal static DataViewModel Read ( FileInfo _xmlFile )
-        {
-            DataViewModel dvm;
-
-            try
-            {
-                using XmlReader stream = XmlReader.Create( new FileStream( _xmlFile.FullName, FileMode.Open ) );
-                dvm = (DataViewModel) new XmlSerializer( typeof( DataViewModel ) ).Deserialize( stream );
-            }
-            catch ( FileNotFoundException )
-            {
-                dvm = new DataViewModel
-                {
-                    XmlError = 1
-                };
-            }
-            catch ( InvalidOperationException )
-            {
-                dvm = new DataViewModel
-                {
-                    XmlError = 2
-                };
-            }
-
-            if ( dvm.SettingVM.SettingList.Count == 0 )
-            {
-                dvm.SettingVM.ResetAllDefault();
-                dvm.SettingVM.GetSetting( "Files", "ScriptFileLocation" ).Value = _xmlFile.Directory.FullName;
-                dvm.SettingVM.GetSetting( "Files", "ScriptFileLocation" ).DefaultValue = _xmlFile.Directory.FullName;
-            }
-            else if ( string.IsNullOrEmpty( dvm.SettingVM.GetSetting( "Files", "ScriptFileLocation" ).Value ) )
-            {
-                dvm.SettingVM.GetSetting( "Files", "ScriptFileLocation" ).Value = _xmlFile.Directory.FullName;
-                dvm.SettingVM.GetSetting( "Files", "ScriptFileLocation" ).DefaultValue = _xmlFile.Directory.FullName;
-            }
-            dvm.InitiateFull();
-
-            return dvm;
         }
 
         private static ReadOnlySpan<char> FetchItemsForScript ( Type type, bool includeMenu )

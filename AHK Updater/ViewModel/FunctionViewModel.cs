@@ -45,7 +45,10 @@ namespace AHKUpdater.ViewModel
         [XmlIgnore]
         public AhkFunction CurrentlyActive
         {
-            get => _currentlyActive;
+            get
+            {
+                return _currentlyActive;
+            }
             set
             {
                 _currentlyActive = value;
@@ -54,17 +57,7 @@ namespace AHKUpdater.ViewModel
             }
         }
 
-        [XmlIgnore]
-        public MessageCollection MessageQueue
-        {
-            get => _messageQueue;
-            set
-            {
-                _messageQueue = value;
-                OnPropertyChanged( "MessageQueue" );
-            }
-        }
-
+        /// <summary> Displays how the function-header will look like in the script-file </summary>
         [XmlIgnore]
         public string FunctionHeader
         {
@@ -85,7 +78,7 @@ namespace AHKUpdater.ViewModel
                               ? $"{ p.Name }"
                               : $"{ parameters }, { p.Name }";
                     }
-                    header = $"{ CurrentlyActive.Name }( { parameters } )";
+                    header = $"{ CurrentlyActive.Name } ( { parameters } )";
                 }
                 else
                 {
@@ -103,6 +96,17 @@ namespace AHKUpdater.ViewModel
         public bool FunctionsUpdated
         {
             get; set;
+        }
+
+        [XmlIgnore]
+        public MessageCollection MessageQueue
+        {
+            get => _messageQueue;
+            set
+            {
+                _messageQueue = value;
+                OnPropertyChanged( "MessageQueue" );
+            }
         }
 
         [XmlIgnore]
@@ -147,7 +151,19 @@ namespace AHKUpdater.ViewModel
         /// <returns>Boolean for if any function is selected</returns>
         public bool AnySelected ()
         {
-            return CurrentlyActive != null;
+            if ( CurrentlyActive == null )
+            {
+                return false;
+            }
+            else
+            {
+                if ( CurrentlyActive.Name.Equals( "PrintText" ) )
+                {
+                    MessageQueue.Add( new Message( MessageType.Warning, Localization.Localization.ValidationMsgFunctionRemovalOfDefaults ) );
+                    return false;
+                }
+            }
+            return true;
         }
 
         /// <summary> Check if a functionname exists </summary>
@@ -156,8 +172,17 @@ namespace AHKUpdater.ViewModel
         public bool NameExists ( string name )
         {
             return CurrentlyActive == null
-                ? FunctionList.Any( x => x.Name.Equals( name, StringComparison.OrdinalIgnoreCase ) )
+                ? NameExistsAll( name )
                 : FunctionList.Where( x => !x.Id.Equals( CurrentlyActive.Id ) ).Any( x => x.Name.Equals( name, StringComparison.OrdinalIgnoreCase ) );
+        }
+
+        /// <summary> Check if a functionname exists </summary>
+        /// <param name="name">Name to check for</param>
+        /// <param name="check"></param>
+        /// <returns></returns>
+        public bool NameExistsAll ( string name )
+        {
+            return FunctionList.Any( x => x.Name.Equals( name, StringComparison.OrdinalIgnoreCase ) );
         }
 
         /// <summary> Remove the currently active function </summary>
@@ -239,6 +264,8 @@ namespace AHKUpdater.ViewModel
                 return !MessageQueue.Any( x => x.Type == MessageType.Error ) && !Unchanged;
             }
         }
+
+        internal void FunctionList_CollectionChanged ( object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e ) { FunctionsUpdated = true; }
 
         private void AddParameter ( AhkFunction fun )
         {
